@@ -1,9 +1,7 @@
 package com.vassbassapp.scrapper;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
-public interface Scrapper<S> {
-    Collection<S>get() throws IOException;
-    void scrapp() throws IOException;
+public interface Scrapper<S> extends Callable<Collection<S>> {
 }

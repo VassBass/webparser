@@ -14,10 +14,12 @@ import com.vassbassapp.dto.ApartmentDTO;
 
 public class ScrapperOlxApartmentsPage implements Scrapper<ApartmentDTO> {
     private static final String MAIN_URL = "https://www.olx.ua/d/uk/nedvizhimost/kvartiry/";
-    private final int currentPage;
-    private final Document currentPageDocument;
+    private final int currentPageNumber;
+    private final String currentPageURL;
+    private final Connection connection;
+    private Document currentPageDocument;
 
-    private static final String HOLDER_CLASS = "css-rc5s2u";
+    private static final String HOLDER_CLASS = "css-1apmciz";
 
     private static final String NAME_CLASS = "css-1pvd0aj-Text eu5v0x0";
     private static final String PRICE_CLASS = "css-1q7gvpp-Text eu5v0x0";
@@ -26,42 +28,25 @@ public class ScrapperOlxApartmentsPage implements Scrapper<ApartmentDTO> {
 
     private final Collection<ApartmentDTO> apartments = new ArrayList<>();
 
-    public ScrapperOlxApartmentsPage(Connection connection, int page) throws IOException {
-        currentPage = page;
-        String currentPage_URL = page > 1 ? MAIN_URL + "?page=" + page : MAIN_URL;
-        currentPageDocument = connection.newRequest().url(currentPage_URL).get();
+    public ScrapperOlxApartmentsPage(Connection connection, int page) {
+        this.connection = connection;
+        currentPageNumber = page;
+        currentPageURL = page > 1 ? MAIN_URL + "?page=" + page : MAIN_URL;
     }
 
-    public boolean isPageExists(){
-        return getUrlPage() == currentPage;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    private int getUrlPage() {
-        String title = currentPageDocument.title();
-        int index = title.lastIndexOf(" ") + 1;
+    @Override
+    public Collection<ApartmentDTO> call() {
         try {
-            return Integer.parseInt(title.substring(index));
-        } catch (NumberFormatException e) {
-            return 1;
+            currentPageDocument = connection.newRequest().url(currentPageURL).get();
+            apartments.clear();
+            Elements holders = currentPageDocument.getElementsByClass(HOLDER_CLASS);
+            for (Element holder : holders) {
+                apartments.add(createApartment(holder));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
-
-    @Override
-    public Collection<ApartmentDTO> get() {
         return apartments;
-    }
-
-    @Override
-    public void scrapp(){
-        apartments.clear();
-        Elements holders = currentPageDocument.getElementsByClass(HOLDER_CLASS);
-        for (Element holder : holders) {
-            apartments.add(createApartment(holder));
-        }
     }
 
     private ApartmentDTO createApartment(Element holder) {
