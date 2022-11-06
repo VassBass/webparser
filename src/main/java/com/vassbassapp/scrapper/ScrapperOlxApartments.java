@@ -8,11 +8,12 @@ import java.util.concurrent.Future;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.vassbassapp.dto.ApartmentDTO;
@@ -23,14 +24,13 @@ public class ScrapperOlxApartments implements Scrapper<ApartmentDTO> {
     private static final String PAGES_NUM_CLASS = "css-1mi714g";
 
     @Override
-    public Collection<ApartmentDTO> call() {
+    public Collection<ApartmentDTO> get() {
         Collection<ApartmentDTO> apartments = new ArrayList<>();
         try {
             Connection connection = Jsoup.newSession();
             Document doc = connection.newRequest().url(URL).get();
-            Elements numberOfPages = doc.getElementsByClass(PAGES_NUM_CLASS);
-            int numOfPages = 0;
-            if (!numberOfPages.isEmpty()) numOfPages = Integer.parseInt(numberOfPages.get(numberOfPages.size() - 1).text());
+            LinkedList<Element> numberOfPages = new LinkedList<>(doc.getElementsByClass(PAGES_NUM_CLASS));
+            int numOfPages = numberOfPages.isEmpty() ? 0 : Integer.parseInt(numberOfPages.getLast().text());
 
             Collection<ScrapperOlxApartmentsPage> scrappers = new ArrayList<>();
 
