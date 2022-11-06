@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -53,12 +52,5 @@ public class ScrapperOlxApartments implements Scrapper<ApartmentDTO> {
         }
 
         return apartments;
-        //try {
-        //    if (es.awaitTermination(10, TimeUnit.MINUTES)) {
-        //        scrappers.forEach(s -> apartments.addAll(s.get()));
-        //    }
-        //} catch (InterruptedException e) {
-        //    e.printStackTrace();
-        //}
     }
 }

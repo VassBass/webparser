@@ -14,7 +14,6 @@ import com.vassbassapp.dto.ApartmentDTO;
 
 public class ScrapperOlxApartmentsPage implements Scrapper<ApartmentDTO> {
     private static final String MAIN_URL = "https://www.olx.ua/d/uk/nedvizhimost/kvartiry/";
-    private final int currentPageNumber;
     private final String currentPageURL;
     private final Connection connection;
     private Document currentPageDocument;
@@ -30,7 +29,6 @@ public class ScrapperOlxApartmentsPage implements Scrapper<ApartmentDTO> {
 
     public ScrapperOlxApartmentsPage(Connection connection, int page) {
         this.connection = connection;
-        currentPageNumber = page;
         currentPageURL = page > 1 ? MAIN_URL + "?page=" + page : MAIN_URL;
     }
 
