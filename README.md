@@ -7,4 +7,4 @@ A demo of scrapper of olx.ua
     jsoup
     jakson
     main in: App.java
-    JAR: webparser.jar
+    JAR: webparser.jar (only console)
