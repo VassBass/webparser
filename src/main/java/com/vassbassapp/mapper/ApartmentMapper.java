@@ -32,6 +32,8 @@ public class ApartmentMapper implements Mapper<ApartmentDTO> {
         Elements square = element.getElementsByClass(SQUARE_CLASS);
         if (!square.isEmpty()) builder.setSquare(square.get(0).text());
 
+        builder.setLink("https://www.olx.ua" + element.attr("href"));
+
         return builder.build();
     }
 }

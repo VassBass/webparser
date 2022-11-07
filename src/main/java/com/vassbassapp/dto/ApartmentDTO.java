@@ -10,6 +10,7 @@ public class ApartmentDTO {
     private String price;
     private String placement;
     private String square;
+    private String link;
 
     public void setName(String name) {
         this.name = name;
@@ -25,6 +26,10 @@ public class ApartmentDTO {
 
     public void setSquare(String square) {
         this.square = square;
+    }
+
+    public void setLink(String link){
+        this.link = link;
     }
 
     public String getName() {
@@ -43,6 +48,10 @@ public class ApartmentDTO {
         return square;
     }
 
+    public String getLink(){
+        return link;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || this.getClass() != o.getClass()) return false;
@@ -52,12 +61,13 @@ public class ApartmentDTO {
         return name.equals(apartment.getName()) &&
                 price.equals(apartment.getPrice()) &&
                 placement.equals(apartment.getPlacement()) &&
-                square.equals(apartment.getSquare());
+                square.equals(apartment.getSquare()) &&
+                link.equals(apartment.getLink());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, price, placement, square);
+        return Objects.hash(name, price, placement, square, link);
     }
 
     @Override

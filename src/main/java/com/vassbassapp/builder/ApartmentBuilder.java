@@ -7,6 +7,7 @@ public class ApartmentBuilder {
     private String price = "Unknown";
     private String placement = "Unknown";
     private String square = "Unknown";
+    private String link = "https://www.olx.ua/d/uk/nedvizhimost/kvartiry/";
 
     public ApartmentBuilder setName(String name) {
         this.name = name;
@@ -28,12 +29,18 @@ public class ApartmentBuilder {
         return this;
     }
 
+    public ApartmentBuilder setLink(String link) {
+        this.link = link;
+        return this;
+    }
+
     public ApartmentDTO build(){
         ApartmentDTO apartment = new ApartmentDTO();
         apartment.setName(name);
         apartment.setPrice(price);
         apartment.setPlacement(placement);
         apartment.setSquare(square);
+        apartment.setLink(link);
         return apartment;
     }
 }

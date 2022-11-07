@@ -17,9 +17,8 @@ public class ScrapperOlxApartmentsPage implements Callable<Collection<ApartmentD
     private static final String MAIN_URL = "https://www.olx.ua/d/uk/nedvizhimost/kvartiry/";
     private final String currentPageURL;
     private final Connection connection;
-    private Document currentPageDocument;
 
-    private static final String HOLDER_CLASS = "css-1apmciz";
+    private static final String HOLDER_CLASS = "css-rc5s2u";
 
     private final Collection<ApartmentDTO> apartments = new ArrayList<>();
 
@@ -31,7 +30,7 @@ public class ScrapperOlxApartmentsPage implements Callable<Collection<ApartmentD
     @Override
     public Collection<ApartmentDTO> call() {
         try {
-            currentPageDocument = connection.newRequest().url(currentPageURL).get();
+            Document currentPageDocument = connection.newRequest().url(currentPageURL).get();
             apartments.clear();
             Elements holders = currentPageDocument.getElementsByClass(HOLDER_CLASS);
             ApartmentMapper mapper = new ApartmentMapper();
