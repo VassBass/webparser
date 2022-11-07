@@ -47,6 +47,7 @@ public class ScrapperOlxApartments implements Scrapper<ApartmentDTO> {
                     e.printStackTrace();
                 }
             });
+            es.shutdown();
         } catch (IOException | InterruptedException e){
             e.printStackTrace();
         }
