@@ -2,3 +2,4 @@
 target
 *.json
 .idea
+src/main/java/META-INF
