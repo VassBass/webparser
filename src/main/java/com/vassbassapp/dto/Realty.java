@@ -1,11 +1,11 @@
 package com.vassbassapp.dto;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ApartmentDTO {
+import java.util.Objects;
+
+public class Realty {
     private String name;
     private String price;
     private String placement;
@@ -57,12 +57,12 @@ public class ApartmentDTO {
         if (o == null || this.getClass() != o.getClass()) return false;
         if (this == o) return true;
 
-        ApartmentDTO apartment = (ApartmentDTO) o;
-        return name.equals(apartment.getName()) &&
-                price.equals(apartment.getPrice()) &&
-                placement.equals(apartment.getPlacement()) &&
-                square.equals(apartment.getSquare()) &&
-                link.equals(apartment.getLink());
+        Realty realty = (Realty) o;
+        return name.equals(realty.getName()) &&
+                price.equals(realty.getPrice()) &&
+                placement.equals(realty.getPlacement()) &&
+                square.equals(realty.getSquare()) &&
+                link.equals(realty.getLink());
     }
 
     @Override
@@ -74,8 +74,8 @@ public class ApartmentDTO {
     public String toString() {
         try {
             return new ObjectMapper()
-                        .writer().withDefaultPrettyPrinter()
-                        .writeValueAsString(this);
+                    .writer().withDefaultPrettyPrinter()
+                    .writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;

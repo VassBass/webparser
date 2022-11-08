@@ -1,22 +1,22 @@
 package com.vassbassapp.builder;
 
-import com.vassbassapp.dto.Apartment;
+import com.vassbassapp.dto.House;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-public class ApartmentBuilderTest {
+public class HouseBuilderTest {
 
     @Test
     public void build() {
-        Apartment expected = new Apartment();
+        House expected = new House();
         expected.setName("name");
         expected.setPrice("price");
         expected.setPlacement("placement");
         expected.setSquare("square");
         expected.setLink("link");
 
-        ApartmentBuilder builder = new ApartmentBuilder();
+        HouseBuilder builder = new HouseBuilder();
 
         assertEquals(expected, builder
                 .setName("name")

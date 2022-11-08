@@ -1,24 +1,21 @@
 package com.vassbassapp.writer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vassbassapp.dto.Apartment;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vassbassapp.dto.ApartmentDTO;
-
-public class ApartmentFileWriter implements FileWriter<ApartmentDTO> {
-
+public class ApartmentFileWriter implements FileWriter<Apartment> {
     @Override
-    public void write(Collection<ApartmentDTO> content) {
+    public void write(Collection<Apartment> content) {
         try {
             new ObjectMapper()
-                .writer(new DefaultPrettyPrinter())
-                .writeValue(Paths.get("apartments.json").toFile(), content);
+                    .writer().withDefaultPrettyPrinter()
+                    .writeValue(Paths.get("apartments.json").toFile(), content);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
 }

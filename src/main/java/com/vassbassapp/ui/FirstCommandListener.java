@@ -5,6 +5,13 @@ import java.util.Scanner;
 public class FirstCommandListener implements CommandListener {
     private static final String apartmentsFull = "apartments";
     private static final String apartments = "/a";
+
+    private static final String housesFull = "houses";
+    private static final String houses = "/h";
+
+    private static final String helpFull = "help";
+    private static final String help = "/hlp";
+
     private static final String exitFull = "exit";
     private static final String exit = "/e";
 
@@ -12,16 +19,25 @@ public class FirstCommandListener implements CommandListener {
 
     @Override
     public void startListen(Scanner scanner) {
-        while (true) {
-            String command = scanner.next();
-            if (command.equals(apartments) || command.equals(apartmentsFull)) {
+        String command = scanner.next();
+        switch (command) {
+            case apartments, apartmentsFull -> {
                 worker.searchApartments();
-            } else if (command.equals(exit) || command.equals(exitFull)) {
-                System.out.println("Goodbye!");
-                break;
-            } else {
+                startListen(scanner);
+            }
+            case houses, housesFull -> {
+                worker.searchHouses();
+                startListen(scanner);
+            }
+            case help, helpFull -> {
+                worker.printHelp();
+                startListen(scanner);
+            }
+            case exit, exitFull -> System.out.println("Goodbye!");
+            default -> {
                 System.out.println("Invalid input!");
                 System.out.println("To show help enter \"help\" or \"/h\"");
+                startListen(scanner);
             }
         }
     }
