@@ -3,18 +3,23 @@ package com.vassbassapp.scrapper.notebooks;
 import java.util.Objects;
 
 public class Notebook {
+    private final String shop;
     private final String link;
     private String title;
     private String price;
     private String presence;
     private String modelCPU;
     private String sizeRAM;
-    private String mainStorageSize;
-    private String mainStorageType;
+    private String mainStorage;
     private String mainOS;
 
-    public Notebook(String link) {
+    public Notebook(String shop, String link) {
+        this.shop = shop;
         this.link = link;
+    }
+
+    public String getShop() {
+        return shop;
     }
 
     public String getTitle() {
@@ -66,21 +71,12 @@ public class Notebook {
         return this;
     }
 
-    public String getMainStorageSize() {
-        return mainStorageSize;
+    public String getMainStorage() {
+        return mainStorage;
     }
 
-    public Notebook setMainStorageSize(String mainStorageSize) {
-        this.mainStorageSize = mainStorageSize;
-        return this;
-    }
-
-    public String getMainStorageType() {
-        return mainStorageType;
-    }
-
-    public Notebook setMainStorageType(String mainStorageType) {
-        this.mainStorageType = mainStorageType;
+    public Notebook setMainStorage(String mainStorage) {
+        this.mainStorage = mainStorage;
         return this;
     }
 
@@ -104,13 +100,12 @@ public class Notebook {
                 Objects.equals(presence, notebook.presence) &&
                 Objects.equals(modelCPU, notebook.modelCPU) &&
                 Objects.equals(sizeRAM, notebook.sizeRAM) &&
-                Objects.equals(mainStorageSize, notebook.mainStorageSize) &&
-                Objects.equals(mainStorageType, notebook.mainStorageType) &&
+                Objects.equals(mainStorage, notebook.mainStorage) &&
                 Objects.equals(mainOS, notebook.mainOS);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(link, title, price, presence, modelCPU, sizeRAM, mainStorageSize, mainStorageType, mainOS);
+        return Objects.hash(link, title, price, presence, modelCPU, sizeRAM, mainStorage, mainOS);
     }
 }
