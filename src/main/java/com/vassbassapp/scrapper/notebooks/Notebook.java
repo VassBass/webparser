@@ -1,0 +1,116 @@
+package com.vassbassapp.scrapper.notebooks;
+
+import java.util.Objects;
+
+public class Notebook {
+    private final String link;
+    private String title;
+    private String price;
+    private String presence;
+    private String modelCPU;
+    private String sizeRAM;
+    private String mainStorageSize;
+    private String mainStorageType;
+    private String mainOS;
+
+    public Notebook(String link) {
+        this.link = link;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Notebook setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public Notebook setPrice(String price) {
+        this.price = price;
+        return this;
+    }
+
+    public String getPresence() {
+        return presence;
+    }
+
+    public Notebook setPresence(String presence) {
+        this.presence = presence;
+        return this;
+    }
+
+    public String getModelCPU() {
+        return modelCPU;
+    }
+
+    public Notebook setModelCPU(String modelCPU) {
+        this.modelCPU = modelCPU;
+        return this;
+    }
+
+    public String getSizeRAM() {
+        return sizeRAM;
+    }
+
+    public Notebook setSizeRAM(String sizeRAM) {
+        this.sizeRAM = sizeRAM;
+        return this;
+    }
+
+    public String getMainStorageSize() {
+        return mainStorageSize;
+    }
+
+    public Notebook setMainStorageSize(String mainStorageSize) {
+        this.mainStorageSize = mainStorageSize;
+        return this;
+    }
+
+    public String getMainStorageType() {
+        return mainStorageType;
+    }
+
+    public Notebook setMainStorageType(String mainStorageType) {
+        this.mainStorageType = mainStorageType;
+        return this;
+    }
+
+    public String getMainOS() {
+        return mainOS;
+    }
+
+    public Notebook setMainOS(String mainOS) {
+        this.mainOS = mainOS;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notebook notebook = (Notebook) o;
+        return link.equals(notebook.link) &&
+                title.equals(notebook.title) &&
+                Objects.equals(price, notebook.price) &&
+                Objects.equals(presence, notebook.presence) &&
+                Objects.equals(modelCPU, notebook.modelCPU) &&
+                Objects.equals(sizeRAM, notebook.sizeRAM) &&
+                Objects.equals(mainStorageSize, notebook.mainStorageSize) &&
+                Objects.equals(mainStorageType, notebook.mainStorageType) &&
+                Objects.equals(mainOS, notebook.mainOS);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(link, title, price, presence, modelCPU, sizeRAM, mainStorageSize, mainStorageType, mainOS);
+    }
+}
