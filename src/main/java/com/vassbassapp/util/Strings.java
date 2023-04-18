@@ -4,6 +4,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Strings {
+    public static final String EMPTY = "";
+
     public static boolean notEmpty(String str) {
         return Objects.nonNull(str) && !str.isBlank();
     }

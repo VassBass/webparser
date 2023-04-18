@@ -1,19 +1,13 @@
 package com.vassbassapp.scrapper;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.List;
 
-public abstract class AbstractEntity<E> {
+public abstract class AbstractExtractor<E> {
     public static final String UNKNOWN = "Unknown";
-
-    protected final Document document;
-
-    public AbstractEntity(String url) throws IOException {
-        this.document = ConnectionHolder.getConnection().newRequest().url(url).get();
-    }
 
     protected String getText(Elements elements) {
         if (elements.isEmpty()) return "";
@@ -26,5 +20,5 @@ public abstract class AbstractEntity<E> {
         return builder.toString();
     }
 
-    public abstract E create();
+    public abstract List<E> extract() throws IOException;
 }

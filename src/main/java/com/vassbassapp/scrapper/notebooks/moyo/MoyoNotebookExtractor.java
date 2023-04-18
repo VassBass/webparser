@@ -1,21 +1,24 @@
 package com.vassbassapp.scrapper.notebooks.moyo;
 
-import com.vassbassapp.scrapper.notebooks.AbstractNotebookEntity;
+import com.vassbassapp.scrapper.notebooks.AbstractNotebookExtractor;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
-public class MoyoNotebookEntity extends AbstractNotebookEntity {
-    private static final String TITLE_SELECTOR = "product_name";
+public class MoyoNotebookExtractor extends AbstractNotebookExtractor {
+    private static final String URL = "https://www.moyo.ua/ua/comp-and-periphery/notebooks/";
+    private static final String URL_SELECTOR = ".product-item_name";
+
+    private static final String TITLE_SELECTOR = ".product_name";
     private static final String PRICE_SELECTOR = ".product_price_current";
     private static final String PRESENCE_SELECTOR = ".product_availability_status";
-    private static final String MODEL_CPU_SELECTOR = ".product_characteristics_list_item:contains(Процесор (модель) .value";
+    private static final String MODEL_CPU_SELECTOR = ".product_characteristics_list_item:contains(Процесор (модель)) .value";
     private static final String SIZE_RAM_SELECTOR = ".product_characteristics_list_item:contains(Оперативна пам'ять (об'єм) .value";
     private static final String MAIN_STORAGE_SELECTOR = ".product_characteristics_list_item:contains(Вбудований накопичувач):not(:contains(швид)) .value";
     private static final String MAIN_OS_SELECTOR = ".product_characteristics_list_item:contains(Передвстановлена ОС) .value";
 
-    public MoyoNotebookEntity(String shop, String url) throws IOException {
-        super(shop, url);
+    public MoyoNotebookExtractor() throws IOException {
+        super(URL, URL_SELECTOR);
     }
 
     @Override

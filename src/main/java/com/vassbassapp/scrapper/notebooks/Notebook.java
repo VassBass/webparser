@@ -3,7 +3,6 @@ package com.vassbassapp.scrapper.notebooks;
 import java.util.Objects;
 
 public class Notebook {
-    private final String shop;
     private final String link;
     private String title;
     private String price;
@@ -13,13 +12,8 @@ public class Notebook {
     private String mainStorage;
     private String mainOS;
 
-    public Notebook(String shop, String link) {
-        this.shop = shop;
+    public Notebook(String link) {
         this.link = link;
-    }
-
-    public String getShop() {
-        return shop;
     }
 
     public String getTitle() {
