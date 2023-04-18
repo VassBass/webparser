@@ -2,6 +2,6 @@ package com.vassbassapp.writer;
 
 import java.util.Collection;
 
-public interface FileWriter<S> {
+public interface JsonFileWriter<S> {
     void write(Collection<S>content);
 }

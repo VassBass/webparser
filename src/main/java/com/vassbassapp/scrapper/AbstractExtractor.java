@@ -3,7 +3,6 @@ package com.vassbassapp.scrapper;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.List;
 
 public abstract class AbstractExtractor<E> {
@@ -20,5 +19,5 @@ public abstract class AbstractExtractor<E> {
         return builder.toString();
     }
 
-    public abstract List<E> extract() throws IOException;
+    public abstract List<E> extract() throws InterruptedException;
 }
