@@ -1,10 +1,9 @@
 # webparser
 
-A demo of scrapper of olx.ua
+A demo of notebook scrapper from https://www.moyo.ua
   
     Java 17
     maven
     jsoup
     jakson
-    main in: App.java
-    JAR: webparser.jar (only console)
+    main in: Start.java
