@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
 
 public abstract class MultipageAbstractNotebookExtractor extends AbstractNotebookExtractor {
@@ -29,8 +30,8 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
         int firstPage = 1;
         List<String> result = new ArrayList<>();
 
-            boolean hasNext = true;
-            while (hasNext) {
+        boolean hasNext = true;
+        while (hasNext) {
                 try {
                     List<Callable<List<String>>> callables = new ArrayList<>(threadPoolSize);
                     for (int i = 0; i < threadPoolSize; i++) {
@@ -60,11 +61,13 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
 
     private Callable<List<String>> getUrlsFromPage(String baseUrl, int pageNum, String urlSelector) {
         return () -> {
-                StringBuilder pageUrlBuilder = new StringBuilder(baseUrl);
-                if (baseUrl.charAt(baseUrl.length() - 1) != '/') pageUrlBuilder.append("/");
-                pageUrlBuilder.append("?page=").append(pageNum);
-                final String pageUrl = pageUrlBuilder.toString();
+            StringBuilder pageUrlBuilder = new StringBuilder(baseUrl);
+            if (baseUrl.charAt(baseUrl.length() - 1) != '/') pageUrlBuilder.append("/");
+            pageUrlBuilder.append("?page=").append(pageNum);
+            final String pageUrl = pageUrlBuilder.toString();
+            for (int i = 0; i < 5; i++) {
                 try {
+                    TimeUnit.SECONDS.sleep(new Random().nextInt(1,6));
                     Document document = Jsoup.newSession().url(pageUrl).get();
                     String current = document.select(PAGE_URL_SELECTOR).attr(PAGE_URL_ATTR);
                     if ((pageNum == 1 && current.equals(baseUrl)) || current.equals(pageUrl)) {
@@ -80,9 +83,12 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                         return threadResult;
                     } else return Collections.emptyList();
                 } catch (Exception e) {
-                    logger.errorWhileScrapping(pageUrl, e);
-                    return Collections.emptyList();
+                    if (i == 4) logger.errorWhileScrapping(pageUrl, e);
+                }
             }
+            return Collections.emptyList();
         };
     }
+
+
 }

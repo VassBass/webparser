@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.*;
 
 public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebook> {
@@ -62,6 +63,7 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
         for (String url : urls) {
             callables.add(() -> {
                 try {
+                    TimeUnit.SECONDS.sleep(new Random().nextInt(1, 6));
                     Document document = Jsoup.newSession().url(url).get();
 
                     String title = extractTitle(document);
