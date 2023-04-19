@@ -4,3 +4,4 @@ target
 *.log
 .idea
 src/main/java/META-INF
+/webparser.jar
