@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class NotebookScrapersSet extends AggressiveHashSet<Notebook> {
     private static volatile NotebookScrapersSet instance;
-    public static NotebookScrapersSet getInstance() throws IOException {
+    public static NotebookScrapersSet getInstance() {
         if (Objects.isNull(instance)) {
             synchronized (NotebookScrapersSet.class) {
                 if (Objects.isNull(instance)) instance = new NotebookScrapersSet();
@@ -17,7 +17,7 @@ public class NotebookScrapersSet extends AggressiveHashSet<Notebook> {
         return instance;
     }
 
-    private NotebookScrapersSet() throws IOException {
+    private NotebookScrapersSet() {
         this.add(new MoyoNotebookExtractor());
     }
 }

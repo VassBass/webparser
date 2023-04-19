@@ -1,5 +1,6 @@
 .vscode
 target
 *.json
+*.log
 .idea
 src/main/java/META-INF

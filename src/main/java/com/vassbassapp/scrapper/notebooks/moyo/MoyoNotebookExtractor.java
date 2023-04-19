@@ -1,11 +1,9 @@
 package com.vassbassapp.scrapper.notebooks.moyo;
 
-import com.vassbassapp.scrapper.notebooks.AbstractNotebookExtractor;
+import com.vassbassapp.scrapper.notebooks.MultipageAbstractNotebookExtractor;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
-
-public class MoyoNotebookExtractor extends AbstractNotebookExtractor {
+public class MoyoNotebookExtractor extends MultipageAbstractNotebookExtractor {
     private static final String URL = "https://www.moyo.ua/ua/comp-and-periphery/notebooks/";
     private static final String URL_SELECTOR = ".product-item_name";
 
@@ -17,7 +15,7 @@ public class MoyoNotebookExtractor extends AbstractNotebookExtractor {
     private static final String MAIN_STORAGE_SELECTOR = ".product_characteristics_list_item:contains(Вбудований накопичувач):not(:contains(швид)) .value";
     private static final String MAIN_OS_SELECTOR = ".product_characteristics_list_item:contains(Передвстановлена ОС) .value";
 
-    public MoyoNotebookExtractor() throws IOException {
+    public MoyoNotebookExtractor() {
         super(URL, URL_SELECTOR);
     }
 

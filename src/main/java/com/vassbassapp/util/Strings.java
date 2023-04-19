@@ -23,4 +23,13 @@ public class Strings {
         return source.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT)) &&
                 source.toUpperCase(Locale.ROOT).contains(contains.toUpperCase(Locale.ROOT));
     }
+
+    public static boolean isInt(String mayInt) {
+        try {
+            Integer.parseInt(mayInt);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

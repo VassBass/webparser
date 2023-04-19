@@ -19,5 +19,5 @@ public abstract class AbstractExtractor<E> {
         return builder.toString();
     }
 
-    public abstract List<E> extract() throws InterruptedException;
+    public abstract List<E> extract();
 }
