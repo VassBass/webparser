@@ -1,4 +1,4 @@
-package com.vassbassapp.output.json;
+package com.vassbassapp.json;
 
 import java.util.List;
 

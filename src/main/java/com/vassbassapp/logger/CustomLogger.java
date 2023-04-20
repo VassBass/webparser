@@ -1,7 +1,9 @@
 package com.vassbassapp.logger;
 
-import com.vassbassapp.output.json.writer.ErrorPoolJsonFileWriter;
+import com.vassbassapp.json.JsonWriter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,8 +35,15 @@ public class CustomLogger {
         if (errorPool.isEmpty()) {
             System.out.println("Error pool is empty");
         } else {
-            ErrorPoolJsonFileWriter jsonFileWriter = ErrorPoolJsonFileWriter.getInstance();
-            jsonFileWriter.write(errorPool);
+            LocalDate currentDate = LocalDate.now();
+            LocalDateTime currentTime = LocalDateTime.now();
+            String fileName = String.format("%s_%s_%s_(%s_%s).log",
+                    currentDate.getDayOfMonth(),
+                    currentDate.getMonthValue(),
+                    currentDate.getYear(),
+                    currentTime.getHour(),
+                    currentTime.getMinute());
+            JsonWriter.getInstance().writeToFile(fileName, errorPool);
             System.err.println("Error pool is not empty! See the log file!");
         }
     }
