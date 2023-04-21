@@ -3,6 +3,7 @@ package com.vassbassapp.logger;
 import com.vassbassapp.json.JsonWriter;
 import com.vassbassapp.ui.console.ColoredPrinter;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -27,8 +28,8 @@ public class CustomLogger {
         ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", url));
     }
 
-    public void errorWhileScrapping(String url, Exception error) {
-        errorPool.put(url, error.getMessage());
+    public void errorWhileScrapping(String url, @Nullable Exception error) {
+        errorPool.put(url, Objects.nonNull(error) ? error.getMessage() : "");
         ColoredPrinter.printlnRed(String.format("Scrapped %s ... Error", url));
     }
 

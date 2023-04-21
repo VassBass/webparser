@@ -18,6 +18,7 @@ import java.util.concurrent.*;
 public abstract class MultipageAbstractNotebookExtractor extends AbstractNotebookExtractor {
     private static final String PAGE_URL_SELECTOR = "meta[property*=url]";
     private static final String PAGE_URL_ATTR = "content";
+    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
 
     public MultipageAbstractNotebookExtractor(String baseUrl, String urlSelector) {
         super(baseUrl, urlSelector);
@@ -80,6 +81,8 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                 ProxyEntity proxy = proxies.take();
                 try {
                     Document document = Jsoup.newSession()
+                            .userAgent(USER_AGENT)
+                            .referrer("http://www.google.com")
                             .proxy(proxy.getIp(), proxy.getPort())
                             .url(pageUrl)
                             .get();

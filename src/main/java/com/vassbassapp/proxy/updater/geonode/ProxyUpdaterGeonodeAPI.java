@@ -12,14 +12,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ProxyUpdaterGeonodeAPI extends JsonProxyUpdater {
-    private static final String HTTP_URL =
+    private static final String URL =
             "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http&anonymityLevel=anonymous";
-    private static final String HTTPS_URL =
-            "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=https&anonymityLevel=anonymous";
-    private static final String HTTP_HTTPS_URL =
-            "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http%2Chttps&anonymityLevel=anonymous";
-    private static final String HTTP_HTTPS_ELITE_URL =
-            "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http%2Chttps&anonymityLevel=elite";
 
     private static volatile ProxyUpdaterGeonodeAPI instance;
 
@@ -37,7 +31,7 @@ public class ProxyUpdaterGeonodeAPI extends JsonProxyUpdater {
     @Override
     public boolean update() {
         ColoredPrinter.print("Sending request to API ... ");
-        try (InputStream in = new URL(HTTP_HTTPS_ELITE_URL).openConnection().getInputStream()) {
+        try (InputStream in = new URL(URL).openConnection().getInputStream()) {
             GeonodeProxyWrap wrap = JsonReader.getInstance().readFromStream(in, GeonodeProxyWrap.class);
             ColoredPrinter.printlnGreen("Success");
             ColoredPrinter.print("Mapping of API response ... ");

@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.concurrent.*;
 
 public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebook> {
+    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
     protected final CustomLogger logger = CustomLogger.getInstance();
 
     private final String baseUrl;
@@ -90,6 +91,8 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                 ProxyEntity proxy = proxies.take();
                 try {
                     Document document = Jsoup.newSession()
+                            .userAgent(USER_AGENT)
+                            .referrer("http://www.google.com")
                             .proxy(proxy.getIp(), proxy.getPort())
                             .url(url)
                             .get();
