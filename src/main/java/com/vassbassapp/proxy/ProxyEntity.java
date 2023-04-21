@@ -11,7 +11,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class ProxyEntity {
     private String ip;
-    private String port;
+    private int port;
 
     @Override
     public String toString() {

@@ -21,7 +21,7 @@ public class ProxyManager {
         if (PROXY_FILE.exists()) {
             List<Map<String, Object>> proxyEntries = JsonReader.getInstance().readFromFile(PROXY_FILE, List.class);
             if (Objects.nonNull(proxyEntries)) return proxyEntries.stream()
-                    .map(e -> new ProxyEntity(e.get(KEY_IP).toString(), e.get(KEY_PORT).toString()))
+                    .map(e -> new ProxyEntity(e.get(KEY_IP).toString(), Integer.parseInt(e.get(KEY_PORT).toString())))
                     .collect(Collectors.toList());
         }
         return Collections.EMPTY_LIST;

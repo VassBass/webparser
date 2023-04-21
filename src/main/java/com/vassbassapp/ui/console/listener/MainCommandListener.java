@@ -1,20 +1,19 @@
 package com.vassbassapp.ui.console.listener;
 
 import com.vassbassapp.ui.console.ColoredPrinter;
+import com.vassbassapp.ui.console.listener.proxy.ProxyCommandListener;
+import com.vassbassapp.ui.console.listener.scrap.ScrapNotebookCommandListener;
 
 import java.util.*;
 
-public class MainCommandListener {
-    public static final String INVALID_INPUT_MESSAGE = "Invalid input! Enter [help] to see all the commands.";
-    public static final String ERROR_MESSAGE = "An error has occurred";
+public class MainCommandListener implements CommandListener {
     private static final String WELCOME_MESSAGE = """
             Welcome! This is demo of vasscraper!
             Enter [help] to see all the commands.
             To close program enter [close]""";
-    public static final String HELP_MESSAGE = """
-                [proxy list]    -   shows list of available proxy
-                [proxy update]  -   update list of available proxy
-                [proxy count]   -   shows count of available proxy""";
+    private static final String HELP_MESSAGE = """
+            [help]  -   shows all available commands
+            [close] -   closes the application""";
 
     private static final String SPACE_SPLITTER = "\\s";
 
@@ -22,35 +21,46 @@ public class MainCommandListener {
     private static final String CLOSE = "close";
     private static final String HELP = "help";
     private static final String PROXY = "proxy";
+    private static final String SCRAP_NOTEBOOK = "scrap-notebook";
 
-    private ProxyCommandListener proxyCommandListener;
+    private final CommandListener proxyCommandListener;
+    private final CommandListener scrapCommandListener;
 
     @SuppressWarnings("InfiniteLoopStatement")
     public MainCommandListener(Scanner listener) {
+        proxyCommandListener = new ProxyCommandListener();
+        scrapCommandListener = new ScrapNotebookCommandListener();
         ColoredPrinter.printlnPurple(WELCOME_MESSAGE);
         while (true) {
-            delegate(new ArrayList<>(Arrays.asList(listener.nextLine().split(SPACE_SPLITTER))));
+            process(new LinkedList<>(Arrays.asList(listener.nextLine().split(SPACE_SPLITTER))));
         }
     }
 
-    private void delegate(List<String> commands) {
+    @Override
+    public void process(Queue<String> commands) {
         if (commands.isEmpty()) {
             ColoredPrinter.printlnRed(INVALID_INPUT_MESSAGE);
             return;
         }
 
-        String command = commands.get(0);
+        String command = commands.poll();
         switch (command.toLowerCase(Locale.ROOT)) {
             case CLOSE -> System.exit(0);
-            case HELP -> ColoredPrinter.printlnPurple(HELP_MESSAGE);
+            case HELP -> printHelp();
 
-            case PROXY -> {
-                if (Objects.isNull(proxyCommandListener)) proxyCommandListener = new ProxyCommandListener();
-                commands.remove(0);
-                proxyCommandListener.process(commands);
-            }
+            case PROXY -> proxyCommandListener.process(commands);
+            case SCRAP_NOTEBOOK -> scrapCommandListener.process(commands);
 
             default -> ColoredPrinter.printlnRed(INVALID_INPUT_MESSAGE);
         }
+    }
+
+    @Override
+    public void printHelp() {
+        scrapCommandListener.printHelp();
+        ColoredPrinter.printlnSeparator();
+        proxyCommandListener.printHelp();
+        ColoredPrinter.printlnSeparator();
+        ColoredPrinter.println(HELP_MESSAGE);
     }
 }

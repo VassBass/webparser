@@ -1,33 +1,38 @@
-package com.vassbassapp.ui.console.listener;
+package com.vassbassapp.ui.console.listener.proxy;
 
 import com.vassbassapp.proxy.ProxyEntity;
 import com.vassbassapp.proxy.manager.ProxyManager;
 import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
 import com.vassbassapp.ui.console.ColoredPrinter;
+import com.vassbassapp.ui.console.listener.CommandListener;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 
-import static com.vassbassapp.ui.console.listener.MainCommandListener.ERROR_MESSAGE;
-import static com.vassbassapp.ui.console.listener.MainCommandListener.INVALID_INPUT_MESSAGE;
-
-public class ProxyCommandListener {
+public class ProxyCommandListener implements CommandListener {
     private static final String EMPTY_LIST_MESSAGE = """
             Proxy list is empty
             Enter [proxy update] to update proxy list""";
+    private static final String HELP_MESSAGE = """
+                [proxy list]    -   shows list of available proxy
+                [proxy update]  -   update list of available proxy
+                [proxy count]   -   shows count of available proxy""";
 
     //Processed commands
     private static final String LIST = "list";
     private static final String UPDATE = "update";
     private static final String COUNT = "count";
 
-    public void process(List<String> commands) {
+    @Override
+    public void process(Queue<String> commands) {
         if (commands.isEmpty()) {
             ColoredPrinter.printlnRed(INVALID_INPUT_MESSAGE);
+            return;
         }
 
-        String command = commands.get(0);
+        String command = commands.poll();
         switch (command.toLowerCase(Locale.ROOT)) {
             case LIST -> showList();
             case UPDATE -> updateList();
@@ -64,5 +69,10 @@ public class ProxyCommandListener {
         } catch (IOException e) {
             ColoredPrinter.printlnRed(ERROR_MESSAGE);
         }
+    }
+
+    @Override
+    public void printHelp() {
+        ColoredPrinter.println(HELP_MESSAGE);
     }
 }

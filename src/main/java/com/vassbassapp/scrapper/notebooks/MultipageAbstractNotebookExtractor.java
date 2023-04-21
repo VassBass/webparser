@@ -1,16 +1,18 @@
 package com.vassbassapp.scrapper.notebooks;
 
 import com.vassbassapp.config.ApplicationConfigHolder;
+import com.vassbassapp.proxy.ProxyEntity;
+import com.vassbassapp.proxy.manager.ProxyManager;
 import com.vassbassapp.util.Strings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
 
 public abstract class MultipageAbstractNotebookExtractor extends AbstractNotebookExtractor {
@@ -19,7 +21,6 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
 
     public MultipageAbstractNotebookExtractor(String baseUrl, String urlSelector) {
         super(baseUrl, urlSelector);
-        System.out.println();
     }
 
     @Override
@@ -29,6 +30,13 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
 
         int firstPage = 1;
         List<String> result = new ArrayList<>();
+        BlockingQueue<ProxyEntity> proxies;
+        try {
+            proxies = new LinkedBlockingQueue<>(ProxyManager.getAllProxy());
+        } catch (IOException e) {
+            logger.errorWhileScrapping(baseUrl, e);
+            return result;
+        }
 
         boolean hasNext = true;
         while (hasNext) {
@@ -36,7 +44,7 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                     List<Callable<List<String>>> callables = new ArrayList<>(threadPoolSize);
                     for (int i = 0; i < threadPoolSize; i++) {
                         final int currentPageNum = firstPage + i;
-                        callables.add(getUrlsFromPage(baseUrl, currentPageNum, urlSelector));
+                        callables.add(getUrlsFromPage(baseUrl, currentPageNum, urlSelector, proxies));
                     }
                     ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);
                     List<Future<List<String>>> futures = service.invokeAll(callables);
@@ -59,16 +67,22 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
         return result;
     }
 
-    private Callable<List<String>> getUrlsFromPage(String baseUrl, int pageNum, String urlSelector) {
+    private Callable<List<String>> getUrlsFromPage(String baseUrl,
+                                                   int pageNum,
+                                                   String urlSelector,
+                                                   BlockingQueue<ProxyEntity> proxies) {
         return () -> {
             StringBuilder pageUrlBuilder = new StringBuilder(baseUrl);
             if (baseUrl.charAt(baseUrl.length() - 1) != '/') pageUrlBuilder.append("/");
             pageUrlBuilder.append("?page=").append(pageNum);
             final String pageUrl = pageUrlBuilder.toString();
-            for (int i = 0; i < 5; i++) {
+            while (!proxies.isEmpty()) {
+                ProxyEntity proxy = proxies.take();
                 try {
-                    TimeUnit.SECONDS.sleep(new Random().nextInt(1,6));
-                    Document document = Jsoup.newSession().url(pageUrl).get();
+                    Document document = Jsoup.newSession()
+                            .proxy(proxy.getIp(), proxy.getPort())
+                            .url(pageUrl)
+                            .get();
                     String current = document.select(PAGE_URL_SELECTOR).attr(PAGE_URL_ATTR);
                     if ((pageNum == 1 && current.equals(baseUrl)) || current.equals(pageUrl)) {
                         List<String> threadResult = new ArrayList<>();
@@ -80,10 +94,11 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                             }
                         }
                         logger.scrapedSuccessful(current);
+                        proxies.put(proxy);
                         return threadResult;
-                    } else return Collections.emptyList();
+                    }
                 } catch (Exception e) {
-                    if (i == 4) logger.errorWhileScrapping(pageUrl, e);
+                    logger.errorWhileScrapping(pageUrl, e);
                 }
             }
             return Collections.emptyList();
