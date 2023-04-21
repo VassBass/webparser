@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ProxyUpdaterGeonodeAPI extends JsonProxyUpdater {
     private static final String URL =
-            "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http";
+            "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http&anonymityLevel=anonymous";
     private static final String KEY_IP = "ip";
     private static final String KEY_PORT = "port";
 
