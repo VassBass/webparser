@@ -1,6 +1,7 @@
 package com.vassbassapp.logger;
 
 import com.vassbassapp.json.JsonWriter;
+import com.vassbassapp.ui.console.ColoredPrinter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,17 +24,17 @@ public class CustomLogger {
     private final Map<String, Exception> errorPool = new HashMap<>();
 
     public void scrapedSuccessful(String url) {
-        System.out.printf("Scrapped %s ... Success\n", url);
+        ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", url));
     }
 
     public void errorWhileScrapping(String url, Exception error) {
         errorPool.put(url, error);
-        System.err.printf("Scrapped %s ... Error\n", url);
+        ColoredPrinter.printlnRed(String.format("Scrapped %s ... Error", url));
     }
 
     public void writeLogFile() {
         if (errorPool.isEmpty()) {
-            System.out.println("Error pool is empty");
+            ColoredPrinter.printlnPurple("Error pool is empty");
         } else {
             LocalDate currentDate = LocalDate.now();
             LocalDateTime currentTime = LocalDateTime.now();
@@ -44,7 +45,7 @@ public class CustomLogger {
                     currentTime.getHour(),
                     currentTime.getMinute());
             JsonWriter.getInstance().writeToFile(fileName, errorPool);
-            System.err.println("Error pool is not empty! See the log file!");
+            ColoredPrinter.printlnRed("Error pool is not empty! See the log file!");
         }
     }
 }
