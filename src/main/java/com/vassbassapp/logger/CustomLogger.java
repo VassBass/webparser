@@ -21,14 +21,14 @@ public class CustomLogger {
         return instance;
     }
 
-    private final Map<String, Exception> errorPool = new HashMap<>();
+    private final Map<String, String> errorPool = new HashMap<>();
 
     public void scrapedSuccessful(String url) {
         ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", url));
     }
 
     public void errorWhileScrapping(String url, Exception error) {
-        errorPool.put(url, error);
+        errorPool.put(url, error.getMessage());
         ColoredPrinter.printlnRed(String.format("Scrapped %s ... Error", url));
     }
 
