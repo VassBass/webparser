@@ -1,23 +1,18 @@
 package com.vassbassapp.ui.console.listener;
 
-import com.vassbassapp.json.JsonReader;
 import com.vassbassapp.proxy.ProxyEntity;
+import com.vassbassapp.proxy.manager.ProxyManager;
 import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
 import com.vassbassapp.ui.console.ColoredPrinter;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 import static com.vassbassapp.ui.console.listener.MainCommandListener.ERROR_MESSAGE;
 import static com.vassbassapp.ui.console.listener.MainCommandListener.INVALID_INPUT_MESSAGE;
 
 public class ProxyCommandListener {
-    private static final String PROXY_FILE_NAME = "proxy.json";
-
     private static final String EMPTY_LIST_MESSAGE = """
             Proxy list is empty
             Enter [proxy update] to update proxy list""";
@@ -43,24 +38,17 @@ public class ProxyCommandListener {
     }
 
     private void showList() {
-        File proxyFile = new File(PROXY_FILE_NAME);
-        if (proxyFile.exists()) {
-            try {
-                List<Map<String, Object>> proxyEntities = getProxyList(proxyFile);
-                if (Objects.isNull(proxyEntities) || proxyEntities.isEmpty()) {
-                    ColoredPrinter.println(EMPTY_LIST_MESSAGE);
-                } else {
-                    ColoredPrinter.printlnSeparator();
-                    proxyEntities.stream()
-                            .map(m -> new ProxyEntity(m.get("ip").toString(), m.get("port").toString()))
-                            .forEach(System.out::println);
-                    ColoredPrinter.printlnSeparator();
-                }
-            } catch (IOException e) {
-                ColoredPrinter.printlnRed(ERROR_MESSAGE);
+        try {
+            List<ProxyEntity> proxyEntities = ProxyManager.getAllProxy();
+            if (proxyEntities.isEmpty()) {
+                ColoredPrinter.println(EMPTY_LIST_MESSAGE);
+            } else {
+                ColoredPrinter.printlnSeparator();
+                proxyEntities.forEach(System.out::println);
+                ColoredPrinter.printlnSeparator();
             }
-        } else {
-            ColoredPrinter.println(EMPTY_LIST_MESSAGE);
+        } catch (IOException e) {
+            ColoredPrinter.printlnRed(ERROR_MESSAGE);
         }
     }
 
@@ -71,21 +59,10 @@ public class ProxyCommandListener {
     }
 
     private void showCount() {
-        int count = 0;
-        File proxyFile = new File(PROXY_FILE_NAME);
-        if (proxyFile.exists()) {
-            try {
-                List<Map<String, Object>> proxyEntities = getProxyList(proxyFile);
-                if (Objects.nonNull(proxyEntities)) count = proxyEntities.size();
-            } catch (IOException e) {
-                ColoredPrinter.println(ERROR_MESSAGE);
-            }
+        try {
+            ColoredPrinter.println(String.format("Proxy count = %s", ProxyManager.getAllProxy().size()));
+        } catch (IOException e) {
+            ColoredPrinter.printlnRed(ERROR_MESSAGE);
         }
-        ColoredPrinter.println(String.format("Proxy count = %s", count));
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> getProxyList(File proxyFile) throws IOException {
-        return JsonReader.getInstance().readFromFile(proxyFile, List.class);
     }
 }

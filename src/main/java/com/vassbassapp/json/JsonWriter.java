@@ -1,22 +1,20 @@
 package com.vassbassapp.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vassbassapp.ui.console.ColoredPrinter;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.io.Writer;
 import java.util.Objects;
 
 public class JsonWriter {
     private static volatile JsonWriter instance;
-    private final ObjectWriter writer;
+    private final Gson writer;
 
     private JsonWriter() {
-        writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        writer = new GsonBuilder().setPrettyPrinting().create();
     }
 
     public static JsonWriter getInstance() {
@@ -29,12 +27,11 @@ public class JsonWriter {
     }
 
     public <T> boolean writeToFile(String fileName, T content) {
-        try {
-            writer.writeValue(Paths.get(fileName).toFile(), content);
+        try (Writer fileWriter = new FileWriter(fileName)) {
+            writer.toJson(content, fileWriter);
             return true;
         } catch (IOException e) {
-            ColoredPrinter.printlnRed("Error writing content to json file!");
-            e.printStackTrace();
+            ColoredPrinter.printlnRed(String.format("Error while writing to file: %s", fileName));
             return false;
         }
     }
