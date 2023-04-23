@@ -1,7 +1,6 @@
 package com.vassbassapp.ui.console.listener.scrap;
 
 import com.vassbassapp.json.JsonWriter;
-import com.vassbassapp.logger.CustomLogger;
 import com.vassbassapp.scrapper.AbstractExtractor;
 import com.vassbassapp.scrapper.notebooks.Notebook;
 import com.vassbassapp.scrapper.notebooks.NotebookScrapersMap;
@@ -61,7 +60,6 @@ public class ScrapNotebookCommandListener implements CommandListener {
             String fileName = String.format("notebooks(%s).json", source);
             JsonWriter.getInstance().writeToFile(fileName, result);
             ColoredPrinter.printlnPurple("Scrapping ends");
-            CustomLogger.getInstance().writeLogFile();
         }
     }
 

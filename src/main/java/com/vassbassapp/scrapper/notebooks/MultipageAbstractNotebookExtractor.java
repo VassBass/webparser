@@ -1,6 +1,7 @@
 package com.vassbassapp.scrapper.notebooks;
 
 import com.vassbassapp.proxy.ProxyEntity;
+import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.util.Strings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,7 +37,7 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
             }
             service.invokeAll(callables);
         } catch (InterruptedException e) {
-            logger.errorWhileScrapping(baseUrl, e);
+            ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", baseUrl, e.getMessage()));
         }
         service.shutdown();
         proxyUpdate.interrupt();
@@ -72,14 +73,14 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                                 urls.put(url);
                             }
                         }
-                        logger.scrapedSuccessful(current);
+                        ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", current));
                         proxies.put(proxy);
                         currentPage += threadPoolSize;
                     } else {
                         break;
                     }
                 } catch (Exception e) {
-                    logger.errorWhileScrapping(pageUrl, e);
+                    ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", pageUrl, e.getMessage()));
                 }
             }
             return null;

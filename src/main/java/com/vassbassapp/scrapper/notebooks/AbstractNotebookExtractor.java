@@ -1,11 +1,11 @@
 package com.vassbassapp.scrapper.notebooks;
 
 import com.vassbassapp.config.ApplicationConfigHolder;
-import com.vassbassapp.logger.CustomLogger;
 import com.vassbassapp.proxy.ProxyEntity;
 import com.vassbassapp.proxy.updater.ProxyUpdater;
 import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
 import com.vassbassapp.scrapper.AbstractExtractor;
+import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.util.Strings;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,7 +20,6 @@ import java.util.concurrent.*;
 
 public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebook> {
     private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
-    protected final CustomLogger logger = CustomLogger.getInstance();
 
     protected final String baseUrl;
     protected final String urlSelector;
@@ -45,9 +44,9 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                     result.add(url);
                 }
             }
-            logger.scrapedSuccessful(baseUrl);
+            ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", baseUrl));
         } catch (IOException e) {
-            logger.errorWhileScrapping(baseUrl, e);
+            ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", baseUrl, e.getMessage()));
         }
 
         return result;
@@ -80,7 +79,7 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
             service.invokeAll(callables);
             return notebooks;
         } catch (InterruptedException e) {
-            logger.errorWhileScrapping(baseUrl, e);
+            ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", baseUrl, e.getMessage()));
         }
         service.shutdown();
         proxyUpdate.interrupt();
@@ -121,11 +120,11 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                             .mainStorage(Strings.notEmpty(mainStorage) ? mainStorage : UNKNOWN)
                             .mainOS(Strings.notEmpty(mainOS) ? mainOS : UNKNOWN)
                             .build();
-                    logger.scrapedSuccessful(url);
+                    ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", url));
                     proxies.put(proxy);
                     notebooks.put(notebook);
                 } catch (Exception e) {
-                    logger.errorWhileScrapping(url, e);
+                    ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", url, e.getMessage()));
                 }
             }
             return null;

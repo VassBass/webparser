@@ -23,20 +23,16 @@ public class ProxyUpdaterGeonodeAPI implements ProxyUpdater {
 
     @Override
     public boolean update() {
-        ColoredPrinter.printlnPurple("Update proxies");
-        ColoredPrinter.print("Sending request to API ... ");
+        ColoredPrinter.printlnPurple("Start update proxies");
         try (InputStream in = new URL(URL).openConnection().getInputStream()) {
             GeonodeProxyWrap wrap = JsonReader.getInstance().readFromStream(in, GeonodeProxyWrap.class);
-            ColoredPrinter.printlnGreen("Success");
-            ColoredPrinter.print("Mapping of API response ... ");
             queue.addAll(wrap.getData().stream()
                     .map(e -> new ProxyEntity(e.get("ip").toString(), Integer.parseInt(e.get("port").toString())))
                     .collect(Collectors.toList()));
-            ColoredPrinter.printlnGreen("Success");
+            ColoredPrinter.printlnGreen("Update proxies ... Success");
             return true;
         } catch (IOException e) {
-            ColoredPrinter.printlnRed("An error has occurred");
-            e.printStackTrace();
+            ColoredPrinter.printlnRed("Proxies update error ... " + e.getMessage());
             return false;
         }
     }
