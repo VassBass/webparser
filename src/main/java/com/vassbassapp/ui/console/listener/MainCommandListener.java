@@ -1,7 +1,6 @@
 package com.vassbassapp.ui.console.listener;
 
 import com.vassbassapp.ui.console.ColoredPrinter;
-import com.vassbassapp.ui.console.listener.proxy.ProxyCommandListener;
 import com.vassbassapp.ui.console.listener.scrap.ScrapNotebookCommandListener;
 
 import java.util.*;
@@ -20,15 +19,12 @@ public class MainCommandListener implements CommandListener {
     //Processed commands
     private static final String CLOSE = "close";
     private static final String HELP = "help";
-    private static final String PROXY = "proxy";
     private static final String SCRAP_NOTEBOOK = "scrap-notebook";
 
-    private final CommandListener proxyCommandListener;
     private final CommandListener scrapCommandListener;
 
     @SuppressWarnings("InfiniteLoopStatement")
     public MainCommandListener(Scanner listener) {
-        proxyCommandListener = new ProxyCommandListener();
         scrapCommandListener = new ScrapNotebookCommandListener();
         ColoredPrinter.printlnPurple(WELCOME_MESSAGE);
         while (true) {
@@ -48,7 +44,6 @@ public class MainCommandListener implements CommandListener {
             case CLOSE -> System.exit(0);
             case HELP -> printHelp();
 
-            case PROXY -> proxyCommandListener.process(commands);
             case SCRAP_NOTEBOOK -> scrapCommandListener.process(commands);
 
             default -> ColoredPrinter.printlnRed(INVALID_INPUT_MESSAGE);
@@ -58,8 +53,6 @@ public class MainCommandListener implements CommandListener {
     @Override
     public void printHelp() {
         scrapCommandListener.printHelp();
-        ColoredPrinter.printlnSeparator();
-        proxyCommandListener.printHelp();
         ColoredPrinter.printlnSeparator();
         ColoredPrinter.println(HELP_MESSAGE);
     }

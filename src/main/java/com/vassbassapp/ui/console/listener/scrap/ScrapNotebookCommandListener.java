@@ -8,10 +8,7 @@ import com.vassbassapp.scrapper.notebooks.NotebookScrapersMap;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
 
 public class ScrapNotebookCommandListener implements CommandListener {
     private static final String HELP_MESSAGE = """
@@ -60,7 +57,7 @@ public class ScrapNotebookCommandListener implements CommandListener {
             ColoredPrinter.printlnRed(NOT_FIND_SOURCE_MESSAGE);
         } else {
             ColoredPrinter.printlnPurple("Start scrapping!");
-            List<Notebook> result = extractor.extract();
+            List<Notebook> result = new ArrayList<>(extractor.extract());
             String fileName = String.format("notebooks(%s).json", source);
             JsonWriter.getInstance().writeToFile(fileName, result);
             ColoredPrinter.printlnPurple("Scrapping ends");

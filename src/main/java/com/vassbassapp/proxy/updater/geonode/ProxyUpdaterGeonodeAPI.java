@@ -1,43 +1,39 @@
 package com.vassbassapp.proxy.updater.geonode;
 
 import com.vassbassapp.json.JsonReader;
-import com.vassbassapp.proxy.updater.JsonProxyUpdater;
+import com.vassbassapp.proxy.ProxyEntity;
+import com.vassbassapp.proxy.updater.ProxyUpdater;
 import com.vassbassapp.ui.console.ColoredPrinter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
 
-public class ProxyUpdaterGeonodeAPI extends JsonProxyUpdater {
+public class ProxyUpdaterGeonodeAPI implements ProxyUpdater {
     private static final String URL =
             "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&protocols=http&anonymityLevel=anonymous";
 
-    private static volatile ProxyUpdaterGeonodeAPI instance;
+    private final BlockingQueue<ProxyEntity> queue;
 
-    private ProxyUpdaterGeonodeAPI(){}
-
-    public static ProxyUpdaterGeonodeAPI getInstance() {
-        if (Objects.isNull(instance)) {
-            synchronized (ProxyUpdaterGeonodeAPI.class) {
-                if (Objects.isNull(instance)) instance = new ProxyUpdaterGeonodeAPI();
-            }
-        }
-        return instance;
+    public ProxyUpdaterGeonodeAPI(BlockingQueue<ProxyEntity> queue) {
+        this.queue = queue;
     }
 
     @Override
     public boolean update() {
+        ColoredPrinter.printlnPurple("Update proxies");
         ColoredPrinter.print("Sending request to API ... ");
         try (InputStream in = new URL(URL).openConnection().getInputStream()) {
             GeonodeProxyWrap wrap = JsonReader.getInstance().readFromStream(in, GeonodeProxyWrap.class);
             ColoredPrinter.printlnGreen("Success");
             ColoredPrinter.print("Mapping of API response ... ");
-            List<Map<String, Object>> proxyEntities = wrap.getData();
+            queue.addAll(wrap.getData().stream()
+                    .map(e -> new ProxyEntity(e.get("ip").toString(), Integer.parseInt(e.get("port").toString())))
+                    .collect(Collectors.toList()));
             ColoredPrinter.printlnGreen("Success");
-            return super.saveProxyList(proxyEntities);
+            return true;
         } catch (IOException e) {
             ColoredPrinter.printlnRed("An error has occurred");
             e.printStackTrace();

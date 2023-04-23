@@ -3,7 +3,8 @@ package com.vassbassapp.scrapper.notebooks;
 import com.vassbassapp.config.ApplicationConfigHolder;
 import com.vassbassapp.logger.CustomLogger;
 import com.vassbassapp.proxy.ProxyEntity;
-import com.vassbassapp.proxy.manager.ProxyManager;
+import com.vassbassapp.proxy.updater.ProxyUpdater;
+import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
 import com.vassbassapp.scrapper.AbstractExtractor;
 import com.vassbassapp.util.Strings;
 import org.jsoup.Jsoup;
@@ -13,23 +14,26 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebook> {
     private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
     protected final CustomLogger logger = CustomLogger.getInstance();
 
-    private final String baseUrl;
-    private final String urlSelector;
+    protected final String baseUrl;
+    protected final String urlSelector;
+    protected final int threadPoolSize;
 
     public AbstractNotebookExtractor(String baseUrl, String urlSelector) {
         this.baseUrl = baseUrl;
         this.urlSelector = urlSelector;
+        ApplicationConfigHolder configHolder = ApplicationConfigHolder.getInstance();
+        threadPoolSize = configHolder.getThreadPoolSize();
     }
 
-    protected List<String> extractItemsUrls(String baseUrl, String urlSelector) {
+    protected Collection<String> extractItemsUrls() {
         List<String> result = new ArrayList<>();
 
         try {
@@ -58,37 +62,39 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
     public abstract String extractMainOS(Document document);
 
     @Override
-    public List<Notebook> extract() {
-        List<String> urls = extractItemsUrls(baseUrl, urlSelector);
+    public Collection<Notebook> extract() {
+        BlockingQueue<String> urls = new LinkedBlockingQueue<>(extractItemsUrls());
+        BlockingQueue<ProxyEntity> proxies = new LinkedBlockingQueue<>();
+        BlockingQueue<Notebook> notebooks = new LinkedBlockingQueue<>();
+
+        Thread proxyUpdate = new Thread(updateProxy(proxies));
+        proxyUpdate.start();
 
         ApplicationConfigHolder configHolder = ApplicationConfigHolder.getInstance();
-        List<Notebook> result = new ArrayList<>();
         int threadPoolSize = configHolder.getThreadPoolSize();
         ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);
 
-        List<Callable<Notebook>> callables = new ArrayList<>();
+        List<Callable<Void>> callables = new ArrayList<>();
         try {
-            BlockingQueue<ProxyEntity> proxies = new LinkedBlockingQueue<>(ProxyManager.getAllProxy());
-            for (String url : urls) callables.add(tryToScrap(url, proxies));
-
-            List<Future<Notebook>> futures = service.invokeAll(callables);
-            for (Future<Notebook> f : futures) {
-                Notebook notebook = f.get();
-                if (Objects.isNull(notebook)) continue;
-                result.add(notebook);
-            }
-        } catch (InterruptedException | ExecutionException | IOException e) {
+            for (int i = 0; i < threadPoolSize; i++) callables.add(tryToScrap(urls, proxies, notebooks));
+            service.invokeAll(callables);
+            return notebooks;
+        } catch (InterruptedException e) {
             logger.errorWhileScrapping(baseUrl, e);
         }
         service.shutdown();
+        proxyUpdate.interrupt();
 
-        return result;
+        return notebooks;
     }
 
-    private Callable<Notebook> tryToScrap(String url, BlockingQueue<ProxyEntity> proxies) {
+    private Callable<Void> tryToScrap(BlockingQueue<String> urls,
+                                          BlockingQueue<ProxyEntity> proxies,
+                                          BlockingQueue<Notebook> notebooks) {
         return () -> {
-            while (!proxies.isEmpty()) {
+            while (!urls.isEmpty()) {
                 ProxyEntity proxy = proxies.take();
+                String url = urls.take();
                 try {
                     Document document = Jsoup.newSession()
                             .userAgent(USER_AGENT)
@@ -117,13 +123,30 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                             .build();
                     logger.scrapedSuccessful(url);
                     proxies.put(proxy);
-                    return notebook;
+                    notebooks.put(notebook);
                 } catch (Exception e) {
                     logger.errorWhileScrapping(url, e);
                 }
             }
-            logger.errorWhileScrapping("Proxy list is empty!", null);
             return null;
+        };
+    }
+
+    protected Runnable updateProxy(BlockingQueue<ProxyEntity> proxyEntities) {
+        return () -> {
+            ProxyUpdater updater = new ProxyUpdaterGeonodeAPI(proxyEntities);
+            while (true) {
+                if (proxyEntities.size() < threadPoolSize) {
+                    if (!updater.update()) {
+                        break;
+                    }
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
         };
     }
 }
