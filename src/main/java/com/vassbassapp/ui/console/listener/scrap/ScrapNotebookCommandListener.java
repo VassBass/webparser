@@ -7,6 +7,8 @@ import com.vassbassapp.scrapper.notebooks.NotebookScrapersMap;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ScrapNotebookCommandListener implements CommandListener {
@@ -55,7 +57,15 @@ public class ScrapNotebookCommandListener implements CommandListener {
         if (Objects.isNull(extractor)) {
             ColoredPrinter.printlnRed(NOT_FIND_SOURCE_MESSAGE);
         } else {
-            ColoredPrinter.printlnPurple("Start scrapping!");
+            LocalDate date = LocalDate.now();
+            LocalDateTime time = LocalDateTime.now();
+            String message = String.format("Start scraping at - %s.%s.%s/%s:%s",
+                    date.getDayOfMonth(),
+                    date.getMonthValue(),
+                    date.getYear(),
+                    time.getHour(),
+                    time.getMinute());
+            ColoredPrinter.printlnPurple(message);
             List<Notebook> result = new ArrayList<>(extractor.extract());
 
             ColoredPrinter.print("Writing output to json ... ");
@@ -65,7 +75,15 @@ public class ScrapNotebookCommandListener implements CommandListener {
                 ColoredPrinter.printlnGreen("Success " + fileName);
             } else ColoredPrinter.printlnRed(ERROR_MESSAGE);
 
-            ColoredPrinter.printlnPurple("Scrapping ends");
+            date = LocalDate.now();
+            time = LocalDateTime.now();
+            message = String.format("Scrapping ends at - %s.%s.%s/%s:%s",
+                    date.getDayOfMonth(),
+                    date.getMonthValue(),
+                    date.getYear(),
+                    time.getHour(),
+                    time.getMinute());
+            ColoredPrinter.printlnPurple(message);
         }
     }
 
