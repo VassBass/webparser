@@ -1,12 +1,14 @@
 package com.vassbassapp.config;
 
 import com.vassbassapp.util.Strings;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
+@Getter
 public class ApplicationConfigHolder {
     private static final String CONFIG_FILE = "application.properties";
 
@@ -35,9 +37,5 @@ public class ApplicationConfigHolder {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public int getThreadPoolSize() {
-        return threadPoolSize;
     }
 }

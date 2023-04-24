@@ -1,13 +1,15 @@
 package com.vassbassapp.util;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 
 public class Strings {
     public static final String EMPTY = "";
 
-    public static boolean notEmpty(String str) {
-        return Objects.nonNull(str) && !str.isBlank();
+    public static boolean notEmpty(String ... str) {
+        return Arrays.stream(str).noneMatch(Objects::isNull) &&
+                Arrays.stream(str).noneMatch(String::isBlank);
     }
 
     public static boolean containsAllIgnoreCase(String source, String ... contains) {

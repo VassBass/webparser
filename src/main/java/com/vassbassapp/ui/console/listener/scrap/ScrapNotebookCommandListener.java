@@ -57,8 +57,13 @@ public class ScrapNotebookCommandListener implements CommandListener {
         } else {
             ColoredPrinter.printlnPurple("Start scrapping!");
             List<Notebook> result = new ArrayList<>(extractor.extract());
+
+            ColoredPrinter.print("Writing json output ... ");
             String fileName = String.format("notebooks(%s).json", source);
-            JsonWriter.getInstance().writeToFile(fileName, result);
+            if (JsonWriter.getInstance().writeToFile(fileName, result)) {
+                ColoredPrinter.printlnGreen("Success " + fileName);
+            } else ColoredPrinter.printlnRed(ERROR_MESSAGE);
+
             ColoredPrinter.printlnPurple("Scrapping ends");
         }
     }
