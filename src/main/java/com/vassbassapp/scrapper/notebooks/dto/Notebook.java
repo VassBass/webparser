@@ -1,4 +1,4 @@
-package com.vassbassapp.scrapper.notebooks;
+package com.vassbassapp.scrapper.notebooks.dto;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

@@ -1,7 +1,8 @@
 package com.vassbassapp.scrapper.notebooks;
 
 import com.vassbassapp.scrapper.AggressiveHashMap;
-import com.vassbassapp.scrapper.notebooks.moyo.MoyoNotebookExtractor;
+import com.vassbassapp.scrapper.notebooks.dto.Notebook;
+import com.vassbassapp.scrapper.notebooks.scrapers.moyo.MoyoNotebookExtractor;
 
 import java.util.Objects;
 

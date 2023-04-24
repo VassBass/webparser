@@ -1,6 +1,6 @@
-package com.vassbassapp.scrapper.notebooks.moyo;
+package com.vassbassapp.scrapper.notebooks.scrapers.moyo;
 
-import com.vassbassapp.scrapper.notebooks.MultipageAbstractNotebookExtractor;
+import com.vassbassapp.scrapper.notebooks.extracor.MultipageAbstractNotebookExtractor;
 import org.jsoup.nodes.Document;
 
 public class MoyoNotebookExtractor extends MultipageAbstractNotebookExtractor {

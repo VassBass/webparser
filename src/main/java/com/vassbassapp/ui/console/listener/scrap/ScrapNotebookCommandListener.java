@@ -2,7 +2,7 @@ package com.vassbassapp.ui.console.listener.scrap;
 
 import com.vassbassapp.json.JsonWriter;
 import com.vassbassapp.scrapper.AbstractExtractor;
-import com.vassbassapp.scrapper.notebooks.Notebook;
+import com.vassbassapp.scrapper.notebooks.dto.Notebook;
 import com.vassbassapp.scrapper.notebooks.NotebookScrapersMap;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;

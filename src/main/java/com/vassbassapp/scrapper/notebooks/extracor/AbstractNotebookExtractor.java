@@ -1,10 +1,11 @@
-package com.vassbassapp.scrapper.notebooks;
+package com.vassbassapp.scrapper.notebooks.extracor;
 
 import com.vassbassapp.config.ApplicationConfigHolder;
 import com.vassbassapp.proxy.ProxyEntity;
 import com.vassbassapp.proxy.updater.ProxyUpdater;
 import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
 import com.vassbassapp.scrapper.AbstractExtractor;
+import com.vassbassapp.scrapper.notebooks.dto.Notebook;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.util.Strings;
 import org.jsoup.Jsoup;
@@ -19,7 +20,8 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebook> {
-    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
+    private static final String USER_AGENT =
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
 
     protected final String baseUrl;
     protected final String urlSelector;
@@ -69,15 +71,12 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
         Thread proxyUpdate = new Thread(updateProxy(proxies));
         proxyUpdate.start();
 
-        ApplicationConfigHolder configHolder = ApplicationConfigHolder.getInstance();
-        int threadPoolSize = configHolder.getThreadPoolSize();
         ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);
 
         List<Callable<Void>> callables = new ArrayList<>();
         try {
             for (int i = 0; i < threadPoolSize; i++) callables.add(tryToScrap(urls, proxies, notebooks));
             service.invokeAll(callables);
-            return notebooks;
         } catch (InterruptedException e) {
             ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", baseUrl, e.getMessage()));
         }
@@ -136,15 +135,13 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
             ProxyUpdater updater = new ProxyUpdaterGeonodeAPI(proxyEntities);
             while (true) {
                 if (proxyEntities.size() < threadPoolSize) {
-                    if (!updater.update()) {
-                        break;
-                    }
+                    if (!updater.update()) System.exit(1);
                 }
-                try {
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException e) {
-                    break;
-                }
+
+                try { TimeUnit.SECONDS.sleep(2); }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                    System.exit(1); }
             }
         };
     }

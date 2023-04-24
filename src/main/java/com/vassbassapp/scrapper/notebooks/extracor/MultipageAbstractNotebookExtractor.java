@@ -1,4 +1,4 @@
-package com.vassbassapp.scrapper.notebooks;
+package com.vassbassapp.scrapper.notebooks.extracor;
 
 import com.vassbassapp.proxy.ProxyEntity;
 import com.vassbassapp.ui.console.ColoredPrinter;
@@ -16,7 +16,9 @@ import java.util.concurrent.*;
 public abstract class MultipageAbstractNotebookExtractor extends AbstractNotebookExtractor {
     private static final String PAGE_URL_SELECTOR = "meta[property*=url]";
     private static final String PAGE_URL_ATTR = "content";
-    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
+    private static final String USER_AGENT =
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
+    private static final String PAGE_PREFIX = "?page=";
 
     public MultipageAbstractNotebookExtractor(String baseUrl, String urlSelector) {
         super(baseUrl, urlSelector);
@@ -26,10 +28,11 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
     protected Collection<String> extractItemsUrls() {
         BlockingQueue<String> urls = new LinkedBlockingQueue<>();
         BlockingQueue<ProxyEntity> proxies = new LinkedBlockingQueue<>();
+
         Thread proxyUpdate = new Thread(updateProxy(proxies));
-        ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);
         proxyUpdate.start();
 
+        ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);
         try {
             List<Callable<Void>> callables = new ArrayList<>(threadPoolSize);
             for (int i = 0; i < threadPoolSize;) {
@@ -53,7 +56,7 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
             while (true) {
                 StringBuilder pageUrlBuilder = new StringBuilder(baseUrl);
                 if (baseUrl.charAt(baseUrl.length() - 1) != '/') pageUrlBuilder.append("/");
-                pageUrlBuilder.append("?page=").append(currentPage);
+                pageUrlBuilder.append(PAGE_PREFIX).append(currentPage);
                 final String pageUrl = pageUrlBuilder.toString();
 
                 ProxyEntity proxy = proxies.take();
