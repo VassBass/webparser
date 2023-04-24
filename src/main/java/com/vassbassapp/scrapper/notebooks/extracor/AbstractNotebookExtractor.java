@@ -1,9 +1,6 @@
 package com.vassbassapp.scrapper.notebooks.extracor;
 
-import com.vassbassapp.config.ApplicationConfigHolder;
 import com.vassbassapp.proxy.ProxyEntity;
-import com.vassbassapp.proxy.updater.ProxyUpdater;
-import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
 import com.vassbassapp.scrapper.AbstractExtractor;
 import com.vassbassapp.scrapper.notebooks.dto.Notebook;
 import com.vassbassapp.ui.console.ColoredPrinter;
@@ -25,13 +22,11 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
 
     protected final String baseUrl;
     protected final String urlSelector;
-    protected final int threadPoolSize;
 
     public AbstractNotebookExtractor(String baseUrl, String urlSelector) {
+        super();
         this.baseUrl = baseUrl;
         this.urlSelector = urlSelector;
-        ApplicationConfigHolder configHolder = ApplicationConfigHolder.getInstance();
-        threadPoolSize = configHolder.getThreadPoolSize();
     }
 
     protected Collection<String> extractItemsUrls() {
@@ -127,22 +122,6 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                 }
             }
             return null;
-        };
-    }
-
-    protected Runnable updateProxy(BlockingQueue<ProxyEntity> proxyEntities) {
-        return () -> {
-            ProxyUpdater updater = new ProxyUpdaterGeonodeAPI(proxyEntities);
-            while (true) {
-                if (proxyEntities.size() < threadPoolSize) {
-                    if (!updater.update()) System.exit(1);
-                }
-
-                try { TimeUnit.SECONDS.sleep(2); }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                    System.exit(1); }
-            }
         };
     }
 }
