@@ -66,7 +66,6 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                             .referrer("http://www.google.com")
                             .proxy(proxy.getIp(), proxy.getPort())
                             .url(pageUrl)
-                            .timeout(60_000)
                             .get();
                     String current = document.select(PAGE_URL_SELECTOR).attr(PAGE_URL_ATTR);
                     if ((currentPage == 1 && current.equals(baseUrl)) || current.equals(pageUrl)) {
@@ -78,10 +77,11 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
                             }
                         }
                         ColoredPrinter.printlnGreen(String.format("Scrapped %s ... Success", current));
-                        proxies.put(proxy);
                         currentPage += threadPoolSize;
+                        proxies.put(proxy);
                     } else {
-                        ColoredPrinter.printlnPurple(String.format("Scrapped %s ... Page not exist", current));
+                        ColoredPrinter.printlnPurple(String.format("Scrapped %s ... Page not exist", pageUrl));
+                        proxies.put(proxy);
                         break;
                     }
                 } catch (Exception e) {

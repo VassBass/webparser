@@ -3,7 +3,7 @@ package com.vassbassapp.scrapper;
 import com.vassbassapp.config.ApplicationConfigHolder;
 import com.vassbassapp.proxy.ProxyEntity;
 import com.vassbassapp.proxy.updater.ProxyUpdater;
-import com.vassbassapp.proxy.updater.geonode.ProxyUpdaterGeonodeAPI;
+import com.vassbassapp.proxy.updater.ProxyUpdaterManager;
 import com.vassbassapp.util.Strings;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -33,16 +33,14 @@ public abstract class AbstractExtractor<E> {
 
     protected Runnable updateProxy(BlockingQueue<ProxyEntity> proxyEntities) {
         return () -> {
-            ProxyUpdater updater = new ProxyUpdaterGeonodeAPI(proxyEntities);
+            ProxyUpdater updater = new ProxyUpdaterManager(proxyEntities);
             while (true) {
                 if (proxyEntities.size() < threadPoolSize) {
                     if (!updater.update()) System.exit(1);
                 }
 
                 try { TimeUnit.SECONDS.sleep(2); }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                    System.exit(1); }
+                catch (InterruptedException ignored) {}
             }
         };
     }
