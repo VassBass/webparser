@@ -2,20 +2,20 @@ package com.vassbassapp.ui.console.listener.scrap;
 
 import com.vassbassapp.json.JsonWriter;
 import com.vassbassapp.scrapper.AbstractExtractor;
-import com.vassbassapp.scrapper.notebooks.dto.Notebook;
-import com.vassbassapp.scrapper.notebooks.NotebookScrapersMap;
+import com.vassbassapp.scrapper.notebook_stand.NotebookStandScrapersMap;
+import com.vassbassapp.scrapper.notebook_stand.dto.NotebookStand;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;
 
 import java.util.*;
 
-public class ScrapNotebookCommandListener implements CommandListener {
+public class ScrapNotebookStandCommandListener implements CommandListener {
     private static final String HELP_MESSAGE = """
-                [scrap-notebook source-list]            -   shows available source for scraping notebooks
-                [scrap-notebook start {source_name}]    -   start scraping of notebooks from source""";
+                [scrap-notebook-stand source-list]            -   shows available source for scraping notebook-stands
+                [scrap-notebook-stand start {source_name}]    -   start scraping of notebook-stands from source""";
     private static final String NOT_FIND_SOURCE_MESSAGE = """
             Scraper for this source is not exists
-            Enter [scrap-notebook source-list] to see all available sources""";
+            Enter [scrap-notebook-stand source-list] to see all available sources""";
 
 
     //Processed commands
@@ -40,7 +40,7 @@ public class ScrapNotebookCommandListener implements CommandListener {
 
     private void showAllSources() {
         ColoredPrinter.printlnSeparator();
-        NotebookScrapersMap.getInstance().keySet().forEach(System.out::println);
+        NotebookStandScrapersMap.getInstance().keySet().forEach(System.out::println);
         ColoredPrinter.printlnSeparator();
     }
 
@@ -51,15 +51,15 @@ public class ScrapNotebookCommandListener implements CommandListener {
         }
 
         String source = commands.poll();
-        AbstractExtractor<Notebook> extractor = NotebookScrapersMap.getInstance().get(source);
+        AbstractExtractor<NotebookStand> extractor = NotebookStandScrapersMap.getInstance().get(source);
         if (Objects.isNull(extractor)) {
             ColoredPrinter.printlnRed(NOT_FIND_SOURCE_MESSAGE);
         } else {
             ColoredPrinter.printlnPurple("Start scrapping!");
-            List<Notebook> result = new ArrayList<>(extractor.extract());
+            List<NotebookStand> result = new ArrayList<>(extractor.extract());
 
             ColoredPrinter.print("Writing output to json ... ");
-            String fileName = String.format("notebooks(%s).json", source);
+            String fileName = String.format("notebook_stands(%s).json", source);
             if (JsonWriter.getInstance().writeToFile(fileName, result)) {
                 ColoredPrinter.printlnGreen("Success " + fileName);
             } else ColoredPrinter.printlnRed(ERROR_MESSAGE);

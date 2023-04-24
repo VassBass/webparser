@@ -2,6 +2,7 @@ package com.vassbassapp.ui.console.listener;
 
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.scrap.ScrapNotebookCommandListener;
+import com.vassbassapp.ui.console.listener.scrap.ScrapNotebookStandCommandListener;
 
 import java.util.*;
 
@@ -20,12 +21,15 @@ public class MainCommandListener implements CommandListener {
     private static final String CLOSE = "close";
     private static final String HELP = "help";
     private static final String SCRAP_NOTEBOOK = "scrap-notebook";
+    private static final String SCRAP_NOTEBOOK_STAND = "scrap-notebook-stand";
 
-    private final CommandListener scrapCommandListener;
+    private final CommandListener scrapNotebookCommandListener;
+    private final CommandListener scrapNotebookStandCommandListener;
 
     @SuppressWarnings("InfiniteLoopStatement")
     public MainCommandListener(Scanner listener) {
-        scrapCommandListener = new ScrapNotebookCommandListener();
+        scrapNotebookCommandListener = new ScrapNotebookCommandListener();
+        scrapNotebookStandCommandListener = new ScrapNotebookStandCommandListener();
         ColoredPrinter.printlnPurple(WELCOME_MESSAGE);
         while (true) {
             process(new LinkedList<>(Arrays.asList(listener.nextLine().split(SPACE_SPLITTER))));
@@ -44,7 +48,8 @@ public class MainCommandListener implements CommandListener {
             case CLOSE -> System.exit(0);
             case HELP -> printHelp();
 
-            case SCRAP_NOTEBOOK -> scrapCommandListener.process(commands);
+            case SCRAP_NOTEBOOK -> scrapNotebookCommandListener.process(commands);
+            case SCRAP_NOTEBOOK_STAND -> scrapNotebookStandCommandListener.process(commands);
 
             default -> ColoredPrinter.printlnRed(INVALID_INPUT_MESSAGE);
         }
@@ -52,7 +57,8 @@ public class MainCommandListener implements CommandListener {
 
     @Override
     public void printHelp() {
-        scrapCommandListener.printHelp();
+        scrapNotebookCommandListener.printHelp();
+        scrapNotebookStandCommandListener.printHelp();
         ColoredPrinter.printlnSeparator();
         ColoredPrinter.println(HELP_MESSAGE);
     }
