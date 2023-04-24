@@ -60,7 +60,8 @@ public class ScrapNotebookCommandListener implements CommandListener {
 
             ColoredPrinter.print("Writing output to json ... ");
             String fileName = String.format("notebooks(%s).json", source);
-            if (JsonWriter.getInstance().writeToFile(fileName, result)) {
+            String folderName = String.format("output/%s/notebook", source);
+            if (JsonWriter.getInstance().writeToFile(folderName, fileName, result)) {
                 ColoredPrinter.printlnGreen("Success " + fileName);
             } else ColoredPrinter.printlnRed(ERROR_MESSAGE);
 

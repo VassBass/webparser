@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vassbassapp.ui.console.ColoredPrinter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -31,7 +32,19 @@ public class JsonWriter {
             writer.toJson(content, fileWriter);
             return true;
         } catch (IOException e) {
-            ColoredPrinter.printlnRed(String.format("Error while writing to file: %s", fileName));
+            ColoredPrinter.printlnRed(String.format("Error while writing to file: %s : %s", fileName, e.getMessage()));
+            return false;
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public <T> boolean writeToFile(String folderName, String fileName, T content) {
+        new File(folderName).mkdirs();
+        try (Writer fileWriter = new FileWriter(new File(folderName, fileName))) {
+            writer.toJson(content, fileWriter);
+            return true;
+        } catch (IOException e) {
+            ColoredPrinter.printlnRed(String.format("Error while writing to file: %s : %s", fileName, e.getMessage()));
             return false;
         }
     }

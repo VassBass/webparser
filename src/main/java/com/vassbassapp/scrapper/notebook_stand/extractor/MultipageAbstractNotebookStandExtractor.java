@@ -66,6 +66,7 @@ public abstract class MultipageAbstractNotebookStandExtractor extends AbstractNo
                             .referrer("http://www.google.com")
                             .proxy(proxy.getIp(), proxy.getPort())
                             .url(pageUrl)
+                            .timeout(60_000)
                             .get();
                     String current = document.select(PAGE_URL_SELECTOR).attr(PAGE_URL_ATTR);
                     if ((currentPage == 1 && current.equals(baseUrl)) || current.equals(pageUrl)) {
@@ -80,6 +81,7 @@ public abstract class MultipageAbstractNotebookStandExtractor extends AbstractNo
                         proxies.put(proxy);
                         currentPage += threadPoolSize;
                     } else {
+                        ColoredPrinter.printlnPurple(String.format("Scrapped %s ... Page not exist", current));
                         break;
                     }
                 } catch (Exception e) {

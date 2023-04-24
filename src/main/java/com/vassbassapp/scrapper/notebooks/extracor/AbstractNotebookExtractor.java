@@ -94,6 +94,7 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                             .referrer("http://www.google.com")
                             .proxy(proxy.getIp(), proxy.getPort())
                             .url(url)
+                            .timeout(60_000)
                             .get();
 
                     String title = extractTitle(document);
