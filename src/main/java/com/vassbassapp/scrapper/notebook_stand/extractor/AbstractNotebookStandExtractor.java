@@ -125,6 +125,7 @@ public abstract class AbstractNotebookStandExtractor extends AbstractExtractor<N
                     proxies.put(proxy);
                     stands.put(stand);
                 } catch (Exception e) {
+                    urls.put(url);
                     ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", url, e.getMessage()));
                 }
             }
