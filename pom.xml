@@ -17,8 +17,8 @@
     <maven.compiler.target>17</maven.compiler.target>
 
     <jsoup.version>1.15.4</jsoup.version>
-    <jackson.version>2.14.2</jackson.version>
     <gson.version>2.10.1</gson.version>
+    <apache-poi.version>5.2.3</apache-poi.version>
     <lombok.version>1.18.26</lombok.version>
     <google-findbugs.version>3.0.2</google-findbugs.version>
   </properties>
@@ -38,14 +38,19 @@
     </dependency>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>${gson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${apache-poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${apache-poi.version}</version>
     </dependency>
 
     <dependency>
@@ -53,7 +58,6 @@
       <artifactId>lombok</artifactId>
       <version>${lombok.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
       <artifactId>jsr305</artifactId>

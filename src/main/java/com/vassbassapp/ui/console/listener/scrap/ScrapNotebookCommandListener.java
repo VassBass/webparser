@@ -66,6 +66,7 @@ public class ScrapNotebookCommandListener implements CommandListener {
                     time.getHour(),
                     time.getMinute());
             ColoredPrinter.printlnPurple(message);
+
             List<Notebook> result = new ArrayList<>(extractor.extract());
 
             ColoredPrinter.print("Writing output to json ... ");

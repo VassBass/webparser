@@ -6,7 +6,12 @@ import com.vassbassapp.scrapper.notebook_stand.NotebookStandScrapersMap;
 import com.vassbassapp.scrapper.notebook_stand.dto.NotebookStand;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;
+import com.vassbassapp.xlsx.TableCreator;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ScrapNotebookStandCommandListener implements CommandListener {
@@ -55,17 +60,48 @@ public class ScrapNotebookStandCommandListener implements CommandListener {
         if (Objects.isNull(extractor)) {
             ColoredPrinter.printlnRed(NOT_FIND_SOURCE_MESSAGE);
         } else {
-            ColoredPrinter.printlnPurple("Start scrapping!");
+            LocalDate date = LocalDate.now();
+            LocalDateTime time = LocalDateTime.now();
+            String message = String.format("Start scraping at - %s.%s.%s/%s:%s",
+                    date.getDayOfMonth(),
+                    date.getMonthValue(),
+                    date.getYear(),
+                    time.getHour(),
+                    time.getMinute());
+            ColoredPrinter.printlnPurple(message);
+
             List<NotebookStand> result = new ArrayList<>(extractor.extract());
 
-            ColoredPrinter.print("Writing output to json ... ");
-            String fileName = String.format("notebook_stands(%s).json", source);
+            String fileName = String.format("notebook_stands(%s)", source);
             String folderName = String.format("output/%s/notebook_stand", source);
-            if (JsonWriter.getInstance().writeToFile(folderName, fileName, result)) {
-                ColoredPrinter.printlnGreen("Success " + fileName);
+
+            ColoredPrinter.print("Writing output to json ... ");
+            String jsonFileName = fileName + ".json";
+            if (JsonWriter.getInstance().writeToFile(folderName, jsonFileName, result)) {
+                ColoredPrinter.printlnGreen("Success : " + jsonFileName);
             } else ColoredPrinter.printlnRed(ERROR_MESSAGE);
 
-            ColoredPrinter.printlnPurple("Scrapping ends");
+            ColoredPrinter.print("Writing output to xlsx ... ");
+            String xlsxFileName = fileName + ".xlsx";
+            try {
+                TableCreator creator = new TableCreator(NotebookStand.class);
+                creator.fillTable(result);
+                creator.saveToFile(folderName, xlsxFileName);
+                ColoredPrinter.printlnGreen("Success : " + xlsxFileName);
+            } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | IOException e) {
+                ColoredPrinter.printlnRed(String.format("%s : %s", ERROR_MESSAGE, e.getMessage()));
+            }
+
+
+            date = LocalDate.now();
+            time = LocalDateTime.now();
+            message = String.format("Scrapping ends at - %s.%s.%s/%s:%s",
+                    date.getDayOfMonth(),
+                    date.getMonthValue(),
+                    date.getYear(),
+                    time.getHour(),
+                    time.getMinute());
+            ColoredPrinter.printlnPurple(message);
         }
     }
 
