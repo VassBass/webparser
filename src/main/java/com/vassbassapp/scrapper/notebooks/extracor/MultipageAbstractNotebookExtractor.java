@@ -27,9 +27,8 @@ public abstract class MultipageAbstractNotebookExtractor extends AbstractNoteboo
     @Override
     protected Collection<String> extractItemsUrls() {
         BlockingQueue<String> urls = new LinkedBlockingQueue<>();
-        BlockingQueue<ProxyEntity> proxies = new LinkedBlockingQueue<>();
 
-        Thread proxyUpdate = new Thread(updateProxy(proxies));
+        Thread proxyUpdate = new Thread(updateProxy());
         proxyUpdate.start();
 
         ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);

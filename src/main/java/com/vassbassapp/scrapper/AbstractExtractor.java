@@ -17,6 +17,7 @@ public abstract class AbstractExtractor<E> {
     public static final String UNKNOWN = "Unknown";
 
     protected final int threadPoolSize;
+    protected BlockingQueue<ProxyEntity> proxies;
 
     public AbstractExtractor() {
         threadPoolSize = ApplicationConfigHolder.getInstance().getThreadPoolSize();
@@ -31,11 +32,11 @@ public abstract class AbstractExtractor<E> {
 
     public abstract Collection<E> extract();
 
-    protected Runnable updateProxy(BlockingQueue<ProxyEntity> proxyEntities) {
+    protected Runnable updateProxy() {
         return () -> {
-            ProxyUpdater updater = new ProxyUpdaterManager(proxyEntities);
+            ProxyUpdater updater = new ProxyUpdaterManager(proxies);
             while (true) {
-                if (proxyEntities.size() < threadPoolSize) {
+                if (proxies.size() < threadPoolSize) {
                     if (!updater.update()) System.exit(1);
                 }
 

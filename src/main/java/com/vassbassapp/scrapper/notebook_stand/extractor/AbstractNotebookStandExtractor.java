@@ -62,10 +62,9 @@ public abstract class AbstractNotebookStandExtractor extends AbstractExtractor<N
     @Override
     public Collection<NotebookStand> extract() {
         BlockingQueue<String> urls = new LinkedBlockingQueue<>(extractItemsUrls());
-        BlockingQueue<ProxyEntity> proxies = new LinkedBlockingQueue<>();
         BlockingQueue<NotebookStand> stands = new LinkedBlockingQueue<>();
 
-        Thread proxyUpdate = new Thread(updateProxy(proxies));
+        Thread proxyUpdate = new Thread(updateProxy());
         proxyUpdate.start();
 
         ExecutorService service = Executors.newFixedThreadPool(threadPoolSize);
