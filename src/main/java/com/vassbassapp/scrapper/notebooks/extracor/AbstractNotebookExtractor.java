@@ -118,6 +118,7 @@ public abstract class AbstractNotebookExtractor extends AbstractExtractor<Notebo
                     proxies.put(proxy);
                     notebooks.put(notebook);
                 } catch (Exception e) {
+                    urls.put(url);
                     ColoredPrinter.printlnRed(String.format("Scrapped %s ... %s", url, e.getMessage()));
                 }
             }
