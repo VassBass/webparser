@@ -16,14 +16,15 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class TableCreator {
+public class XlsxWriter {
     private static final String GET = "get";
+    private static final String IS = "is";
     private static final String CLASS = "class";
 
     private final Class<?> clazz;
     protected Workbook book;
 
-    public TableCreator(Class<?> clazz) {
+    public XlsxWriter(Class<?> clazz) {
         this.clazz = clazz;
         createHeader();
     }
@@ -36,9 +37,34 @@ public class TableCreator {
 
             for (int c = 0; c < getters.size(); c++) {
                 Cell cell = row.createCell(c);
-                String value = (String) clazz.getMethod(getters.get(c)).invoke(output.get(i));
-                cell.setCellValue(Objects.isNull(value) ? Strings.EMPTY : value);
+                String toInsert = null;
+                for (int x = 0; x < 4; x++) {
+                    try {
+                        if (x == 0){
+                            toInsert = (String) clazz.getMethod(getters.get(c)).invoke(output.get(i));
+                            break;
+                        } else if (x == 1) {
+                            toInsert = String.valueOf((int) clazz.getMethod(getters.get(c)).invoke(output.get(i)));
+                            break;
+                        } else if (x == 2) {
+                            toInsert = String.valueOf((double) clazz.getMethod(getters.get(c)).invoke(output.get(i)));
+                            break;
+                        } else {
+                            toInsert = String.valueOf((boolean) clazz.getMethod(getters.get(c)).invoke(output.get(i)));
+                            break;
+                        }
+                    } catch (ClassCastException ignore) {}
+                }
+
+                cell.setCellValue(Objects.isNull(toInsert) ? Strings.EMPTY : toInsert);
             }
+        }
+    }
+
+    public void saveToFile(String fileName) throws IOException {
+        try (FileOutputStream out = new FileOutputStream(fileName)) {
+            book.write(out);
+            book.close();
         }
     }
 
@@ -62,8 +88,6 @@ public class TableCreator {
         Row header = sheet.createRow(0);
 
         CellStyle headerStyle = book.createCellStyle();
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
         XSSFFont font = ((XSSFWorkbook) book).createFont();
         font.setBold(true);
         headerStyle.setFont(font);
@@ -78,7 +102,7 @@ public class TableCreator {
     private List<String> getGettersNames() {
         return Arrays.stream(clazz.getMethods())
                 .map(Method::getName)
-                .filter(m -> m.contains(GET))
+                .filter(m -> m.startsWith(GET) || m.startsWith(IS))
                 .filter(m -> !m.toLowerCase(Locale.ROOT).contains(CLASS))
                 .collect(Collectors.toList());
     }

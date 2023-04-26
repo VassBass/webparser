@@ -6,7 +6,7 @@ import com.vassbassapp.scrapper.notebook_stand.NotebookStandScrapersMap;
 import com.vassbassapp.scrapper.notebook_stand.dto.NotebookStand;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;
-import com.vassbassapp.xlsx.TableCreator;
+import com.vassbassapp.xlsx.XlsxWriter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -84,7 +84,7 @@ public class ScrapNotebookStandCommandListener implements CommandListener {
             ColoredPrinter.print("Writing output to xlsx ... ");
             String xlsxFileName = fileName + ".xlsx";
             try {
-                TableCreator creator = new TableCreator(NotebookStand.class);
+                XlsxWriter creator = new XlsxWriter(NotebookStand.class);
                 creator.fillTable(result);
                 creator.saveToFile(folderName, xlsxFileName);
                 ColoredPrinter.printlnGreen("Success : " + xlsxFileName);

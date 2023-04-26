@@ -14,6 +14,7 @@ public class Strings {
 
     public static boolean containsAllIgnoreCase(String source, String ... contains) {
         for (String c : contains) {
+            if (Objects.isNull(c)) return false;
             boolean con = source.toLowerCase(Locale.ROOT).contains(c.toLowerCase(Locale.ROOT)) &&
                     source.toUpperCase(Locale.ROOT).contains(c.toUpperCase(Locale.ROOT));
             if (!con) return false;
@@ -28,7 +29,7 @@ public class Strings {
 
     public static boolean isInt(String mayInt) {
         try {
-            Integer.parseInt(mayInt);
+            Integer.parseInt(mayInt.replaceAll("_", ""));
             return true;
         } catch (Exception e) {
             return false;
