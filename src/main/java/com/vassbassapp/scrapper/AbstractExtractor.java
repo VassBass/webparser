@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public abstract class AbstractExtractor<E> {
 
     public AbstractExtractor() {
         threadPoolSize = ApplicationConfigHolder.getInstance().getThreadPoolSize();
+        proxies = new LinkedBlockingQueue<>();
     }
 
     protected String getText(Elements elements) {
@@ -35,9 +37,14 @@ public abstract class AbstractExtractor<E> {
     protected Runnable updateProxy() {
         return () -> {
             ProxyUpdater updater = new ProxyUpdaterManager(proxies);
+            int errorCount = 0;
             while (true) {
                 if (proxies.size() < threadPoolSize) {
-                    if (!updater.update()) System.exit(1);
+                    if (updater.update()) {
+                        errorCount = 0;
+                    } else errorCount++;
+
+                    if (errorCount == 4) System.exit(1);
                 }
 
                 try { TimeUnit.SECONDS.sleep(2); }
