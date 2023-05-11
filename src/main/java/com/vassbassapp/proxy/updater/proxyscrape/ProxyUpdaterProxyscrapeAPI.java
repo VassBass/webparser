@@ -26,6 +26,15 @@ public class ProxyUpdaterProxyscrapeAPI implements ProxyUpdater {
         this.queue = queue;
     }
 
+    
+    /**
+     * The update function is responsible for updating the proxy list.
+     * It does so by downloading a new list of proxies from the URL, parsing it and adding them to the queue.
+     
+     *
+     *
+     * @return A boolean value, which is true if the update was successful and false otherwise
+     */
     @Override
     public boolean update() {
         ColoredPrinter.printlnPurple("Start update proxies");
@@ -41,6 +50,18 @@ public class ProxyUpdaterProxyscrapeAPI implements ProxyUpdater {
         }
     }
 
+    
+    /**
+     * The parseProxy function takes a String as an argument and returns a Collection of ProxyEntity objects.
+     * The function splits the input string by the PROXY_ENTITY_SPLITTER constant, which is \r\n.
+     * It then maps each element in the resulting array to a new ProxyEntity object if it contains at least one colon (\r\n) character,
+     * and if that colon separates two non-empty strings where the second string can be parsed into an integer.  If these conditions are not met, null is returned instead of a new ProxyEntity object.  
+     * Finally, all null values are filtered out from this collection before returning
+     *
+     * @param entry Split the string into an array of strings
+     *
+     * @return A collection of proxyentity objects
+     */
     private Collection<ProxyEntity> parseProxy(String entry) {
         String[] proxies = entry.split(PROXY_ENTITY_SPLITTER);
         return Arrays.stream(proxies)
