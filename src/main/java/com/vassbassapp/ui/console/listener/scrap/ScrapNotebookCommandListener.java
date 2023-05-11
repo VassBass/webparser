@@ -2,11 +2,14 @@ package com.vassbassapp.ui.console.listener.scrap;
 
 import com.vassbassapp.json.JsonWriter;
 import com.vassbassapp.scrapper.AbstractExtractor;
-import com.vassbassapp.scrapper.notebooks.dto.Notebook;
 import com.vassbassapp.scrapper.notebooks.NotebookScrapersMap;
+import com.vassbassapp.scrapper.notebooks.dto.Notebook;
 import com.vassbassapp.ui.console.ColoredPrinter;
 import com.vassbassapp.ui.console.listener.CommandListener;
+import com.vassbassapp.xlsx.XlsxWriter;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -69,12 +72,25 @@ public class ScrapNotebookCommandListener implements CommandListener {
 
             List<Notebook> result = new ArrayList<>(extractor.extract());
 
-            ColoredPrinter.print("Writing output to json ... ");
-            String fileName = String.format("notebooks(%s).json", source);
+            String fileName = String.format("notebook(%s)", source);
             String folderName = String.format("output/%s/notebook", source);
-            if (JsonWriter.getInstance().writeToFile(folderName, fileName, result)) {
+
+            ColoredPrinter.print("Writing output to json ... ");
+            String jsonFileName = fileName + ".json";
+            if (JsonWriter.getInstance().writeToFile(folderName, jsonFileName, result)) {
                 ColoredPrinter.printlnGreen("Success " + fileName);
             } else ColoredPrinter.printlnRed(ERROR_MESSAGE);
+
+            ColoredPrinter.print("Writing output to xlsx ... ");
+            String xlsxFileName = fileName + ".xlsx";
+            try {
+                XlsxWriter creator = new XlsxWriter(Notebook.class);
+                creator.fillTable(result);
+                creator.saveToFile(folderName, xlsxFileName);
+                ColoredPrinter.printlnGreen("Success : " + xlsxFileName);
+            } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | IOException e) {
+                ColoredPrinter.printlnRed(String.format("%s : %s", ERROR_MESSAGE, e.getMessage()));
+            }
 
             date = LocalDate.now();
             time = LocalDateTime.now();

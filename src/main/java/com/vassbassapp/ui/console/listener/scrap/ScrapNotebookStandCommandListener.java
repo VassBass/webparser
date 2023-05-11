@@ -92,7 +92,6 @@ public class ScrapNotebookStandCommandListener implements CommandListener {
                 ColoredPrinter.printlnRed(String.format("%s : %s", ERROR_MESSAGE, e.getMessage()));
             }
 
-
             date = LocalDate.now();
             time = LocalDateTime.now();
             message = String.format("Scrapping ends at - %s.%s.%s/%s:%s",
